@@ -8,6 +8,4 @@ RUN yum update -y && \
     yum install -y epel-release && \
     yum install -y git zip curl wget python-pip
 
-VOLUME /work
-
-WORKDIR /work
+CMD /bin/bash
