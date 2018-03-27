@@ -4,7 +4,7 @@ FROM ubuntu:latest
 
 MAINTAINER me@nalbam.com
 
-RUN add-apt-repository ppa:openjdk-r/ppa && \
+RUN add-apt-repository -y ppa:webupd8team/java && \
     apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y git zip curl wget docker python-pip nodejs openjdk-8-jdk maven && \
