@@ -4,8 +4,9 @@ FROM ubuntu:latest
 
 MAINTAINER me@nalbam.com
 
-RUN apt-get update && apt-get upgrade && \
-    apt-get install git zip curl wget docker lookup ifconfig python-pip java-1.8.0-openjdk-devel maven nodejs && \
+RUN apt-get update && \
+    apt-get upgrade && \
+    apt-get install git zip curl wget docker python-pip java-1.8.0-openjdk-devel maven nodejs && \
     pip install awscli gcloud ansible
 
 CMD /bin/bash
