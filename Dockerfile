@@ -1,14 +1,10 @@
 # Dockerfile
 
-FROM centos:latest
+FROM alpine:latest
 
 MAINTAINER me@nalbam.com
 
-RUN yum update -y && \
-    yum install -y epel-release && \
-    yum install -y git zip curl wget docker python-pip nodejs java-1.8.0-openjdk-devel maven && \
-    pip install awscli gcloud ansible
-
-RUN yum install -y lookup nslookup ifconfig telnet
-
-CMD /bin/bash
+RUN apk --no-cache update && \
+    apk --no-cache add python py-pip curl git zip && \
+    pip --no-cache-dir install awscli gcloud && \
+    rm -rf /var/cache/apk/*
