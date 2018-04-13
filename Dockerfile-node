@@ -8,5 +8,7 @@ RUN apk --no-cache update && \
     apk --no-cache add cat git zip curl docker && \
     rm -rf /var/cache/apk/*
 
+WORKDIR /root
+
 ENTRYPOINT ["npm"]
 CMD ["--help"]

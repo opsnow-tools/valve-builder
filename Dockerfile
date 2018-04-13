@@ -8,5 +8,7 @@ RUN apk --no-cache update && \
     apk --no-cache add git zip curl docker python && \
     rm -rf /var/cache/apk/*
 
+WORKDIR /root
+
 ENTRYPOINT ["python"]
 CMD ["--help"]
