@@ -1,6 +1,6 @@
 # Dockerfile
 
-FROM alpine:latest
+FROM maven:alpine
 
 MAINTAINER me@nalbam.com
 
