@@ -6,5 +6,5 @@ MAINTAINER me@nalbam.com
 
 RUN apk --no-cache update && \
     apk --no-cache add gcc git zip curl docker groff less python python-dev py-pip && \
-    pip --no-cache-dir install awscli gcloud && \
+    pip install awscli gcloud && \
     rm -rf /var/cache/apk/*
