@@ -9,6 +9,3 @@ RUN apk --no-cache update && \
     rm -rf /var/cache/apk/*
 
 WORKDIR /root
-
-ENTRYPOINT ["npm"]
-CMD ["--help"]
