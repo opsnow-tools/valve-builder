@@ -11,3 +11,6 @@ RUN apk --no-cache update && \
 COPY extra/settings.xml /root/.m2/
 
 WORKDIR /root
+
+ENTRYPOINT ["mvn"]
+CMD ["--help"]

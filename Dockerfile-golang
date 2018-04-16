@@ -9,3 +9,6 @@ RUN apk --no-cache update && \
     rm -rf /var/cache/apk/*
 
 WORKDIR /root
+
+ENTRYPOINT ["go"]
+CMD ["--help"]
