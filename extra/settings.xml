@@ -5,7 +5,7 @@
     <localRepository>/var/jenkins_home/.m2/repository</localRepository>
     <servers>
         <server>
-            <id>nexus-local</id>
+            <id>nexus-public</id>
             <username>admin</username>
             <password>admin123</password>
         </server>
