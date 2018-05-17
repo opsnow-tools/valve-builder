@@ -6,7 +6,7 @@ MAINTAINER me@nalbam.com
 
 RUN apk --no-cache update && \
     apk --no-cache add git zip curl docker && \
-    rm -rf /var/cache/apk/* \
+    rm -rf /var/cache/apk/* && \
     pip install awscli
 
 WORKDIR /root
