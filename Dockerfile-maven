@@ -2,7 +2,7 @@
 
 FROM maven:3-jdk-10
 
-RUN apt-get install -y git zip curl wget docker bash openssl ca-certificates --no-install-recommends
+RUN apt-get install -y git zip curl wget openssl ca-certificates --no-install-recommends
 
 COPY extra/settings.xml /root/.m2/
 

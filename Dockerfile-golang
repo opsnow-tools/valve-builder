@@ -2,6 +2,6 @@
 
 FROM golang:stretch
 
-RUN apt-get install -y git zip curl wget docker bash openssl ca-certificates --no-install-recommends
+RUN apt-get install -y git zip curl wget openssl ca-certificates --no-install-recommends
 
 WORKDIR /root
