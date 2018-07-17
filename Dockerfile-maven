@@ -1,8 +1,6 @@
 # Dockerfile
 
-FROM maven:alpine
-
-MAINTAINER me@nalbam.com
+FROM maven:3.5.4-jdk-11
 
 RUN apk --no-cache update && \
     apk --no-cache add git zip curl docker bash openssl ca-certificates && \

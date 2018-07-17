@@ -1,8 +1,6 @@
 # Dockerfile
 
-FROM node:alpine
-
-MAINTAINER me@nalbam.com
+FROM node:10
 
 RUN apk --no-cache update && \
     apk --no-cache add git zip curl docker bash openssl ca-certificates && \
