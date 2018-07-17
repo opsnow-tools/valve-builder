@@ -1,10 +1,9 @@
 # Dockerfile
 
-FROM python:3.5.5
+FROM alpine:latest
 
 RUN apk --no-cache update && \
-    apk --no-cache add git zip curl docker bash openssl ca-certificates && \
-    rm -rf /var/cache/apk/* && \
-    pip install awscli
+    apk --no-cache add git zip curl wget docker bash openssl ca-certificates && \
+    rm -rf /var/cache/apk/*
 
 WORKDIR /root

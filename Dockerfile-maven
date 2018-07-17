@@ -1,10 +1,8 @@
 # Dockerfile
 
-FROM maven:3.5.4-jdk-11
+FROM maven:3-jdk-10
 
-RUN apk --no-cache update && \
-    apk --no-cache add git zip curl docker bash openssl ca-certificates && \
-    rm -rf /var/cache/apk/*
+RUN apt-get install -y git zip curl wget docker bash openssl ca-certificates --no-install-recommends
 
 COPY extra/settings.xml /root/.m2/
 

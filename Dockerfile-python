@@ -1,10 +1,7 @@
 # Dockerfile
 
-FROM python:3.5.5
+FROM python:stretch
 
-RUN apk --no-cache update && \
-    apk --no-cache add git zip curl docker bash openssl ca-certificates && \
-    rm -rf /var/cache/apk/* && \
-    pip install awscli
+RUN apt-get install -y git zip curl wget docker bash openssl ca-certificates --no-install-recommends
 
 WORKDIR /root
