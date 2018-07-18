@@ -2,8 +2,24 @@
 
 FROM scratch
 
-COPY bin/bastion.sh /root/
+RUN apt-get update && \
+    apt-get install -y curl tar python-pip && \
+    pip install --upgrade --user awscli
 
-RUN bash /root/bastion.sh
+ENV OS_NAME="linux"
+ENV KUBE_VERSION="v1.11.1"
+ENV HELM_VERSION="v2.9.1"
+ENV DRAFT_VERSION="v0.15.0"
+
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBE_VERSION}/bin/${OS_NAME}/amd64/kubectl && \
+    chmod +x kubectl && mv kubectl /usr/local/bin/kubectl
+
+RUN curl -L https://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-${OS_NAME}-amd64.tar.gz | tar xz && \
+    mv ${OS_NAME}-amd64/helm /usr/local/bin/helm
+
+RUN curl -L https://azuredraft.blob.core.windows.net/draft/draft-${DRAFT_VERSION}-${OS_NAME}-amd64.tar.gz | tar xz && \
+    mv ${OS_NAME}-amd64/draft /usr/local/bin/draft
 
 WORKDIR /root
+
+ENTRYPOINT ["bash"]
