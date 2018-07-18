@@ -18,6 +18,10 @@ RUN DRAFT=$(curl -s https://api.github.com/repos/Azure/draft/releases/latest | j
     curl -L https://azuredraft.blob.core.windows.net/draft/draft-${DRAFT}-linux-amd64.tar.gz | tar xz && \
     mv linux-amd64/draft /usr/local/bin/draft
 
+RUN SKAFFOLD=$(curl -s https://api.github.com/repos/GoogleContainerTools/skaffold/releases/latest | jq --raw-output '.tag_name') && \
+    curl -LO https://storage.googleapis.com/skaffold/releases/${SKAFFOLD}/skaffold-linux-amd64 && \
+    chmod +x skaffold-linux-amd64 && mv skaffold-linux-amd64 /usr/local/bin/skaffold
+
 WORKDIR /root
 
 ENTRYPOINT ["bash"]
