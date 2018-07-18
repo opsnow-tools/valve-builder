@@ -4,6 +4,6 @@ FROM scratch
 
 COPY bin/bastion.sh /root/
 
-RUN /root/bastion.sh
+RUN bash /root/bastion.sh
 
 WORKDIR /root
