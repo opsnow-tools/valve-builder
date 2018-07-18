@@ -1,7 +1,9 @@
 # Dockerfile
 
-FROM golang:stretch
+FROM golang:alpine
 
-RUN apt-get install -y curl wget openssl ca-certificates --no-install-recommends
+RUN apk --no-cache update && \
+    apk --no-cache add git zip curl docker bash openssl ca-certificates && \
+    rm -rf /var/cache/apk/*
 
 WORKDIR /root

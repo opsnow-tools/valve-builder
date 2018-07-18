@@ -1,0 +1,9 @@
+# Dockerfile
+
+FROM scratch
+
+COPY bin/bastion.sh /root/
+
+RUN /root/bastion.sh
+
+WORKDIR /root
