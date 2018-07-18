@@ -1,9 +1,9 @@
 # Dockerfile
 
-FROM alpine:latest
+FROM ubuntu:16.04
 
-RUN apk --no-cache update && \
-    apk --no-cache add git zip curl docker bash openssl ca-certificates && \
-    rm -rf /var/cache/apk/*
+RUN apt-get update && apt-get install -y curl tar
 
-WORKDIR /root
+RUN curl -sL toast.sh/helper/bastion.sh | bash
+
+ENTRYPOINT ["bash"]
