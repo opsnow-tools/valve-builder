@@ -3,7 +3,7 @@
 FROM ubuntu:16.04
 
 RUN apt-get update && \
-    apt-get install -y curl git tar jq docker python-pip && \
+    apt-get install -y curl tar jq openssl ca-certificates python-pip && \
     pip install --upgrade --user awscli
 
 RUN KUBECTL=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt) && \
