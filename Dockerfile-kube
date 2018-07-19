@@ -2,7 +2,7 @@
 
 FROM ubuntu:16.04
 
-RUN apt-get update && apt-get install -y curl tar jq
+RUN apt-get update && apt-get install -y curl git tar jq
 
 RUN KUBECTL=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt) && \
     curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL}/bin/linux/amd64/kubectl && \
