@@ -10,7 +10,7 @@ RUN KUBECTL=$(curl -s https://storage.googleapis.com/kubernetes-release/release/
     curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL}/bin/linux/amd64/kubectl && \
     chmod +x kubectl && mv kubectl /usr/local/bin/kubectl
 
-RUN HELM=$(curl -s https://api.github.com/repos/kubernetes/helm/releases/latest | jq --raw-output '.tag_name') && \
+RUN HELM=$(curl -s https://api.github.com/repos/helm/helm/releases/latest | jq --raw-output '.tag_name') && \
     curl -L https://storage.googleapis.com/kubernetes-helm/helm-${HELM}-linux-amd64.tar.gz | tar xz && \
     mv linux-amd64/helm /usr/local/bin/helm
 
