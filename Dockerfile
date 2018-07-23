@@ -2,6 +2,9 @@
 
 FROM ubuntu:16.04
 
+ENV TZ=Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 RUN apt-get update && \
     apt-get install -y curl tar git jq docker openssl ca-certificates python-pip && \
     pip install --upgrade --user awscli
