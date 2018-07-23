@@ -12,8 +12,7 @@ RUN KUBECTL=$(curl -s https://storage.googleapis.com/kubernetes-release/release/
 
 RUN HELM=$(curl -s https://api.github.com/repos/helm/helm/releases/latest | jq --raw-output '.tag_name') && \
     curl -L https://storage.googleapis.com/kubernetes-helm/helm-${HELM}-linux-amd64.tar.gz | tar xz && \
-    mv linux-amd64/helm /usr/local/bin/helm && \
-    helm plugin install https://github.com/chartmuseum/helm-push
+    mv linux-amd64/helm /usr/local/bin/helm
 
 RUN DRAFT=$(curl -s https://api.github.com/repos/Azure/draft/releases/latest | jq --raw-output '.tag_name') && \
     curl -L https://azuredraft.blob.core.windows.net/draft/draft-${DRAFT}-linux-amd64.tar.gz | tar xz && \
