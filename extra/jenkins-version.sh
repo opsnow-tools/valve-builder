@@ -6,7 +6,7 @@ VERSION=0
 NODE=$(kubectl get ing -n default -o wide | grep sample-node | head -1 | awk '{print $2}')
 
 if [ ! -z ${NODE} ]; then
-    VERSION=$(curl -sL -X POST http://${NODE}/counter/sample | xargs)
+    VERSION=$(curl -sL -X POST http://${NODE}/counter/${NAME} | xargs)
 fi
 
 if [ "${VERSION}" == "0" ]; then
