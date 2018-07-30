@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAME=${1:-sample}
-VERSION=0
+VERSION=
 
 NODE=$(kubectl get ing -n default -o wide | grep sample-node | head -1 | awk '{print $2}')
 
@@ -9,7 +9,7 @@ if [ ! -z ${NODE} ]; then
     VERSION=$(curl -sL -X POST http://${NODE}/counter/${NAME} | xargs)
 fi
 
-if [ "${VERSION}" == "0" ]; then
+if [ -z ${VERSION} ]; then
     LIST=/home/jenkins/.version/list
     TEMP=/tmp/.version
 
@@ -34,7 +34,7 @@ if [ "${VERSION}" == "0" ]; then
         done < ${LIST}
     fi
 
-    if [ "${VERSION}" == "0" ]; then
+    if [ -z ${VERSION} ]; then
         VERSION=1
         echo "${NAME} ${VERSION}" >> ${TEMP}
     fi
