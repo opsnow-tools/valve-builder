@@ -13,3 +13,9 @@ echo $REGISTRY > /home/jenkins/REGISTRY
 echo $NEXUS > /home/jenkins/NEXUS
 
 echo $BASE_DOMAIN > /home/jenkins/BASE_DOMAIN
+
+echo "# BASE_DOMAIN: $(cat /home/jenkins/BASE_DOMAIN)"
+echo "# JENKINS: $(cat /home/jenkins/JENKINS)"
+echo "# CHARTMUSEUM: $(cat /home/jenkins/CHARTMUSEUM)"
+echo "# REGISTRY: $(cat /home/jenkins/REGISTRY)"
+echo "# NEXUS: $(cat /home/jenkins/NEXUS)"

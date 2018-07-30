@@ -33,4 +33,6 @@ fi
 
 echo "0.1.${VERSION}" > /home/jenkins/VERSION
 
+echo "# version: $(cat /home/jenkins/VERSION)"
+
 cp -rf ${TEMP} ${LIST}
