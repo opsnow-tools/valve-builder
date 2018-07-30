@@ -8,22 +8,24 @@ TEMP=/tmp/.version
 
 echo "# version" > ${TEMP}
 
-while read LINE; do
-    ARR=(${LINE})
+if [ -f ${LIST} ]; then
+    while read LINE; do
+        ARR=(${LINE})
 
-    if [ "${ARR[0]}" == "#" ]; then
-        continue
-    fi
+        if [ "${ARR[0]}" == "#" ]; then
+            continue
+        fi
 
-    if [ "${ARR[0]}" == "${NAME}" ]; then
-        VER=$(( ${ARR[1]} + 1 ))
-        VERSION=${VER}
-    else
-        VER=${ARR[1]}
-    fi
+        if [ "${ARR[0]}" == "${NAME}" ]; then
+            VER=$(( ${ARR[1]} + 1 ))
+            VERSION=${VER}
+        else
+            VER=${ARR[1]}
+        fi
 
-    echo "${ARR[0]} ${VER}" >> ${TEMP}
-done < ${LIST}
+        echo "${ARR[0]} ${VER}" >> ${TEMP}
+    done < ${LIST}
+fi
 
 if [ "${VERSION}" == "1" ]; then
     echo "${NAME} ${VERSION}" >> ${TEMP}
