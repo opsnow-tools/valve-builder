@@ -29,6 +29,6 @@ if [ "${VERSION}" == "1" ]; then
     echo "${NAME} ${VERSION}" >> ${TEMP}
 fi
 
-echo "${VERSION}" > /home/jenkins/VERSION
+echo "0.1.${VERSION}" > /home/jenkins/VERSION
 
 cp -rf ${TEMP} ${LIST}
