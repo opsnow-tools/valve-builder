@@ -25,7 +25,7 @@ RUN SKAFFOLD=$(curl -s https://api.github.com/repos/GoogleContainerTools/skaffol
     curl -LO https://storage.googleapis.com/skaffold/releases/${SKAFFOLD}/skaffold-linux-amd64 && \
     chmod +x skaffold-linux-amd64 && mv skaffold-linux-amd64 /usr/local/bin/skaffold
 
-COPY extra/ /root/bin/
+COPY extra/ /root/extra/
 
 WORKDIR /root
 
