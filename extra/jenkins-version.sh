@@ -42,6 +42,6 @@ if [ -z ${VERSION} ]; then
     cp -rf ${TEMP} ${LIST}
 fi
 
-echo "0.1.${VERSION}" > /home/jenkins/VERSION
+printf "0.1.${VERSION}" > /home/jenkins/VERSION
 
 echo "# version: $(cat /home/jenkins/VERSION)"

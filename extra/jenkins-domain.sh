@@ -7,12 +7,12 @@ NEXUS=$(kubectl get ing -n ${1:-devops} -o wide | grep sonatype-nexus | awk '{pr
 
 BASE_DOMAIN=${JENKINS:$(expr index $JENKINS \.)}
 
-echo $JENKINS > /home/jenkins/JENKINS
-echo $CHARTMUSEUM > /home/jenkins/CHARTMUSEUM
-echo $REGISTRY > /home/jenkins/REGISTRY
-echo $NEXUS > /home/jenkins/NEXUS
+printf $JENKINS > /home/jenkins/JENKINS
+printf $CHARTMUSEUM > /home/jenkins/CHARTMUSEUM
+printf $REGISTRY > /home/jenkins/REGISTRY
+printf $NEXUS > /home/jenkins/NEXUS
 
-echo $BASE_DOMAIN > /home/jenkins/BASE_DOMAIN
+printf $BASE_DOMAIN > /home/jenkins/BASE_DOMAIN
 
 echo "# BASE_DOMAIN: $(cat /home/jenkins/BASE_DOMAIN)"
 echo "# JENKINS: $(cat /home/jenkins/JENKINS)"
