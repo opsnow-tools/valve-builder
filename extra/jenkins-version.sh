@@ -46,4 +46,4 @@ fi
 
 printf "0.1.${VERSION}-${REVISION}" > /home/jenkins/VERSION
 
-echo "# version: $(cat /home/jenkins/VERSION)"
+echo "# VERSION: $(cat /home/jenkins/VERSION)"
