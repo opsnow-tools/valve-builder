@@ -1,7 +1,9 @@
 #!/bin/bash
 
 NAME=${1:-sample}
+
 VERSION=
+REVISION=$(git rev-parse --short=6 HEAD)
 
 NODE=$(kubectl get ing -n default -o wide | grep sample-node | head -1 | awk '{print $2}')
 
@@ -42,6 +44,6 @@ if [ -z ${VERSION} ]; then
     cp -rf ${TEMP} ${LIST}
 fi
 
-printf "0.1.${VERSION}" > /home/jenkins/VERSION
+printf "0.1.${VERSION}-${REVISION}" > /home/jenkins/VERSION
 
 echo "# version: $(cat /home/jenkins/VERSION)"
