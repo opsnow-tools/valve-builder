@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAME=${1:-sample}
-BRANCH=${1:-master}
+BRANCH=${2:-master}
 
 VERSION=
 REVISION=$(git rev-parse --short=6 HEAD)
