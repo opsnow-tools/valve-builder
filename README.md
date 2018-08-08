@@ -1,5 +1,5 @@
 # builder
 
 ```bash
-sudo docker pull nalbam/builder:alpine
+sudo docker pull nalbam/builder
 ```
