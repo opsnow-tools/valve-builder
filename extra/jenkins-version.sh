@@ -4,7 +4,7 @@ NAME=${1:-sample}
 BRANCH=${2:-master}
 
 VERSION=
-REVISION=$(git rev-parse --short=6 HEAD)
+REVISION=
 
 NODE=$(kubectl get ing -n default -o wide | grep sample-node | head -1 | awk '{print $2}')
 
@@ -14,6 +14,9 @@ fi
 
 if [ -z ${VERSION} ]; then
     VERSION=0
+    REVISION=$(date +%Y%m%d-%H%M%S)
+else
+    REVISION=$(git rev-parse --short=6 HEAD)
 fi
 
 if [ "${BRANCH}" == "master" ]; then
