@@ -81,3 +81,4 @@ get_domain sonatype-nexus NEXUS ${NAMESPACE}
 
 cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || get_language pom.xml java
 cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || get_language package.json nodejs
+cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || printf "" > ${HOME}/SOURCE_LANG
