@@ -18,25 +18,6 @@ get_domain() {
     echo "# ${SAVE}: $(cat ${HOME}/${SAVE})"
 }
 
-get_language() {
-    NAME=${1}
-    LANG=${2}
-
-    FIND=$(find . -name ${NAME} | head -1)
-
-    if [ ! -z ${FIND} ]; then
-        ROOT=$(dirname ${FIND})
-
-        if [ ! -z ${ROOT} ]; then
-            printf "$ROOT" > ${HOME}/SOURCE_ROOT
-            printf "$LANG" > ${HOME}/SOURCE_LANG
-
-            echo "# SOURCE_LANG: $(cat ${HOME}/SOURCE_LANG)"
-            echo "# SOURCE_ROOT: $(cat ${HOME}/SOURCE_ROOT)"
-        fi
-    fi
-}
-
 NAMESPACE=${1:-devops}
 
 get_domain jenkins JENKINS ${NAMESPACE}
@@ -44,6 +25,3 @@ get_domain chartmuseum CHARTMUSEUM ${NAMESPACE}
 get_domain docker-registry REGISTRY ${NAMESPACE}
 get_domain sonarqube SONARQUBE ${NAMESPACE}
 get_domain sonatype-nexus NEXUS ${NAMESPACE}
-
-cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || get_language pom.xml java
-cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || get_language package.json nodejs
