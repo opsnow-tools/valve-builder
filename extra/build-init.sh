@@ -2,6 +2,10 @@
 
 PATH=${HOME}
 
+NAME=${1:-sample}
+BRANCH=${2:-master}
+NAMESPACE=${3:-devops}
+
 get_version() {
     NAME=${1:-sample}
     BRANCH=${2:-master}
@@ -67,11 +71,6 @@ get_language() {
         fi
     fi
 }
-
-NAME=${1:-sample}
-BRANCH=${2:-master}
-
-NAMESPACE=${3:-devops}
 
 get_version ${NAME} ${BRANCH}
 
