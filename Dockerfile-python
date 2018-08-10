@@ -2,8 +2,8 @@
 
 FROM python:alpine
 
-RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-    echo 'Asia/Seoul' > /etc/timezone
+ENV TZ Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apk --no-cache update && \
     apk --no-cache add git zip curl docker bash openssl ca-certificates && \

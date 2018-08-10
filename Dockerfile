@@ -2,8 +2,8 @@
 
 FROM ubuntu:16.04
 
-RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-    echo 'Asia/Seoul' > /etc/timezone
+ENV TZ Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && \
     apt-get install -y bash curl tar git jq docker openssl ca-certificates python-pip && \
