@@ -72,6 +72,18 @@ get_language() {
     fi
 }
 
+get_maven_mirror() {
+    LANG=$(cat ${HOME}/SOURCE_LANG)
+    NEXUS=$(cat ${HOME}/NEXUS)
+    if [ "${LANG}" == "java" ] && [ ! -z ${NEXUS} ]; then
+        if [ -f /root/extra/settings.xml ]; then
+            cp -rf /root/extra/settings.xml ${HOME}/settings.xml
+            NEXUS_PUBLIC="https://${NEXUS}/repository/maven-public/"
+            sed -i 's|<!-- ### configured mirrors ### -->|<mirror><id>mirror</id><url>${NEXUS_PUBLIC}</url><mirrorOf>*</mirrorOf></mirror>|' ${HOME}/settings.xml
+        fi
+    fi
+}
+
 get_version
 
 get_domain jenkins JENKINS
@@ -84,3 +96,5 @@ printf "." > ${HOME}/SOURCE_ROOT
 cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || get_language pom.xml java
 cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || get_language package.json nodejs
 cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || printf "" > ${HOME}/SOURCE_LANG
+
+get_maven_mirror
