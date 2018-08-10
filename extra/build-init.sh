@@ -63,8 +63,8 @@ get_language() {
         ROOT=$(dirname ${FIND})
 
         if [ ! -z ${ROOT} ]; then
-            printf "$ROOT" > ${HOME}/SOURCE_ROOT
             printf "$LANG" > ${HOME}/SOURCE_LANG
+            printf "$ROOT" > ${HOME}/SOURCE_ROOT
 
             echo "# SOURCE_LANG: $(cat ${HOME}/SOURCE_LANG)"
             echo "# SOURCE_ROOT: $(cat ${HOME}/SOURCE_ROOT)"
@@ -82,4 +82,4 @@ get_domain sonatype-nexus NEXUS
 
 cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || get_language pom.xml java
 cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || get_language package.json nodejs
-cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || printf "" > ${HOME}/SOURCE_LANG
+cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || printf "" > ${HOME}/SOURCE_LANG && printf "." > ${HOME}/SOURCE_ROOT
