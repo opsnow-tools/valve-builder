@@ -3,6 +3,7 @@
 NAME=${1:-sample}
 BRANCH=${2:-master}
 NAMESPACE=${3:-devops}
+BASE_DOMAIN=
 
 get_version() {
     VERSION=
@@ -36,14 +37,19 @@ get_domain() {
 
     DOMAIN=$(kubectl get ing -n ${NAMESPACE} -o wide | grep ${NAME} | head -1 | awk '{print $2}' | cut -d',' -f1)
 
-    printf "${DOMAIN}" > ${HOME}/${SAVE}
+    if [ ! -z ${DOMAIN} ]; then
+        if [ "${NAME}" == "jenkins" ]; then
+            BASE_DOMAIN=${DOMAIN:$(expr index $DOMAIN \.)}
+            printf "$BASE_DOMAIN" > ${HOME}/BASE_DOMAIN
+            echo "# BASE_DOMAIN: $(cat ${HOME}/BASE_DOMAIN)"
+        fi
 
-    if [ ! -z ${DOMAIN} ] && [ "${NAME}" == "jenkins" ]; then
-        BASE_DOMAIN=${DOMAIN:$(expr index $DOMAIN \.)}
-        printf "$BASE_DOMAIN" > ${HOME}/BASE_DOMAIN
-        echo "# BASE_DOMAIN: $(cat ${HOME}/BASE_DOMAIN)"
+        if [ ! -z ${BASE_DOMAIN} ]; then
+            DOMAIN="${NAME}-${NAMESPACE}.${BASE_DOMAIN}"
+        fi
     fi
 
+    printf "${DOMAIN}" > ${HOME}/${SAVE}
     echo "# ${SAVE}: $(cat ${HOME}/${SAVE})"
 }
 
