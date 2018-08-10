@@ -1,7 +1,5 @@
 #!/bin/bash
 
-PATH=${HOME}
-
 NAME=${1:-sample}
 BRANCH=${2:-master}
 NAMESPACE=${3:-devops}
@@ -24,12 +22,12 @@ get_version() {
     fi
 
     if [ "${BRANCH}" == "master" ]; then
-        printf "0.1.${VERSION}-${REVISION}" > ${PATH}/VERSION
+        printf "0.1.${VERSION}-${REVISION}" > ${HOME}/VERSION
     else
-        printf "0.0.${VERSION}-${BRANCH}" > ${PATH}/VERSION
+        printf "0.0.${VERSION}-${BRANCH}" > ${HOME}/VERSION
     fi
 
-    echo "# VERSION: $(cat ${PATH}/VERSION)"
+    echo "# VERSION: $(cat ${HOME}/VERSION)"
 }
 
 get_domain() {
@@ -38,15 +36,15 @@ get_domain() {
 
     DOMAIN=$(kubectl get ing -n ${NAMESPACE} -o wide | grep ${NAME} | head -1 | awk '{print $2}' | cut -d',' -f1)
 
-    printf "${DOMAIN}" > ${PATH}/${SAVE}
+    printf "${DOMAIN}" > ${HOME}/${SAVE}
 
     if [ ! -z ${DOMAIN} ] && [ "${NAME}" == "jenkins" ]; then
         BASE_DOMAIN=${DOMAIN:$(expr index $DOMAIN \.)}
-        printf "$BASE_DOMAIN" > ${PATH}/BASE_DOMAIN
-        echo "# BASE_DOMAIN: $(cat ${PATH}/BASE_DOMAIN)"
+        printf "$BASE_DOMAIN" > ${HOME}/BASE_DOMAIN
+        echo "# BASE_DOMAIN: $(cat ${HOME}/BASE_DOMAIN)"
     fi
 
-    echo "# ${SAVE}: $(cat ${PATH}/${SAVE})"
+    echo "# ${SAVE}: $(cat ${HOME}/${SAVE})"
 }
 
 get_language() {
@@ -59,11 +57,11 @@ get_language() {
         ROOT=$(dirname ${FIND})
 
         if [ ! -z ${ROOT} ]; then
-            printf "$ROOT" > ${PATH}/SOURCE_ROOT
-            printf "$LANG" > ${PATH}/SOURCE_LANG
+            printf "$ROOT" > ${HOME}/SOURCE_ROOT
+            printf "$LANG" > ${HOME}/SOURCE_LANG
 
-            echo "# SOURCE_LANG: $(cat ${PATH}/SOURCE_LANG)"
-            echo "# SOURCE_ROOT: $(cat ${PATH}/SOURCE_ROOT)"
+            echo "# SOURCE_LANG: $(cat ${HOME}/SOURCE_LANG)"
+            echo "# SOURCE_ROOT: $(cat ${HOME}/SOURCE_ROOT)"
         fi
     fi
 }
@@ -76,6 +74,6 @@ get_domain docker-registry REGISTRY
 get_domain sonarqube SONARQUBE
 get_domain sonatype-nexus NEXUS
 
-cat ${PATH}/SOURCE_LANG > /dev/null 2>&1 || get_language pom.xml java
-cat ${PATH}/SOURCE_LANG > /dev/null 2>&1 || get_language package.json nodejs
-cat ${PATH}/SOURCE_LANG > /dev/null 2>&1 || printf "" > ${PATH}/SOURCE_LANG
+cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || get_language pom.xml java
+cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || get_language package.json nodejs
+cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || printf "" > ${HOME}/SOURCE_LANG
