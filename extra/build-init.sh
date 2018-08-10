@@ -17,7 +17,7 @@ get_version() {
 
     if [ -z ${VERSION} ]; then
         VERSION=0
-        REVISION=$(date +%Y%m%d-%H%M%S)
+        REVISION=$(TZ=Asia/Seoul date +%Y%m%d-%H%M%S)
     else
         REVISION=$(git rev-parse --short=6 HEAD)
     fi
