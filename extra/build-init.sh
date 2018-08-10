@@ -7,9 +7,6 @@ BRANCH=${2:-master}
 NAMESPACE=${3:-devops}
 
 get_version() {
-    NAME=${1:-sample}
-    BRANCH=${2:-master}
-
     VERSION=
     REVISION=
 
@@ -38,7 +35,6 @@ get_version() {
 get_domain() {
     NAME=${1}
     SAVE=${2}
-    NAMESPACE=${3}
 
     DOMAIN=$(kubectl get ing -n ${NAMESPACE} -o wide | grep ${NAME} | head -1 | awk '{print $2}' | cut -d',' -f1)
 
@@ -54,10 +50,10 @@ get_domain() {
 }
 
 get_language() {
-    NAME=${1}
+    FILE=${1}
     LANG=${2}
 
-    FIND=$(find . -name ${NAME} | head -1)
+    FIND=$(find . -name ${FILE} | head -1)
 
     if [ ! -z ${FIND} ]; then
         ROOT=$(dirname ${FIND})
@@ -72,13 +68,13 @@ get_language() {
     fi
 }
 
-get_version ${NAME} ${BRANCH}
+get_version
 
-get_domain jenkins JENKINS ${NAMESPACE}
-get_domain chartmuseum CHARTMUSEUM ${NAMESPACE}
-get_domain docker-registry REGISTRY ${NAMESPACE}
-get_domain sonarqube SONARQUBE ${NAMESPACE}
-get_domain sonatype-nexus NEXUS ${NAMESPACE}
+get_domain jenkins JENKINS
+get_domain chartmuseum CHARTMUSEUM
+get_domain docker-registry REGISTRY
+get_domain sonarqube SONARQUBE
+get_domain sonatype-nexus NEXUS
 
 cat ${PATH}/SOURCE_LANG > /dev/null 2>&1 || get_language pom.xml java
 cat ${PATH}/SOURCE_LANG > /dev/null 2>&1 || get_language package.json nodejs
