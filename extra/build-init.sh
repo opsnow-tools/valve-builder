@@ -77,9 +77,10 @@ get_maven_mirror() {
     NEXUS=$(cat ${HOME}/NEXUS)
     if [ "${LANG}" == "java" ] && [ ! -z ${NEXUS} ]; then
         if [ -f /root/extra/settings.xml ]; then
-            cp -rf /root/extra/settings.xml ${HOME}/settings.xml
-            MAVEN_PUBLIC="https://${NEXUS}/repository/maven-public/"
+            MAVEN_PUBLIC="http://${NEXUS}/repository/maven-public/"
+            echo "# MAVEN_PUBLIC: ${MAVEN_PUBLIC}}"
             MIRROR="<mirror><id>mirror</id><url>${MAVEN_PUBLIC}</url><mirrorOf>*</mirrorOf></mirror>"
+            cp -rf /root/extra/settings.xml ${HOME}/settings.xml
             sed -i "s|<!-- ### configured mirrors ### -->|${MIRROR}|" ${HOME}/settings.xml
         fi
     fi
