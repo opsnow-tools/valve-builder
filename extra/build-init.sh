@@ -74,14 +74,18 @@ get_language() {
 
 get_maven_mirror() {
     LANG=$(cat ${HOME}/SOURCE_LANG)
-    NEXUS=$(cat ${HOME}/NEXUS)
-    if [ "${LANG}" == "java" ] && [ ! -z ${NEXUS} ]; then
+    if [ "${LANG}" == "java" ]; then
         if [ -f /root/extra/settings.xml ]; then
-            MAVEN_PUBLIC="http://${NEXUS}/repository/maven-public/"
-            echo "# MAVEN_PUBLIC: ${MAVEN_PUBLIC}}"
-            MIRROR="<mirror><id>mirror</id><url>${MAVEN_PUBLIC}</url><mirrorOf>*</mirrorOf></mirror>"
             cp -rf /root/extra/settings.xml ${HOME}/settings.xml
-            sed -i "s|<!-- ### configured mirrors ### -->|${MIRROR}|" ${HOME}/settings.xml
+        fi
+        NEXUS=$(cat ${HOME}/NEXUS)
+        if [ [ ! -z ${NEXUS} ]; then
+            if [ -f ${HOME}/settings.xml ]; then
+                MIRROR="<mirror><id>mirror</id><url>${MAVEN_PUBLIC}</url><mirrorOf>*</mirrorOf></mirror>"
+                MAVEN_PUBLIC="http://${NEXUS}/repository/maven-public/"
+                echo "# MAVEN_PUBLIC: ${MAVEN_PUBLIC}}"
+                sed -i "s|<!-- ### configured mirrors ### -->|${MIRROR}|" ${HOME}/settings.xml
+            fi
         fi
     fi
 }
