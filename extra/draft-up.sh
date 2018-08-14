@@ -19,5 +19,5 @@ sed -i -e "s/NAMESPACE/$NAMESPACE/g" draft.toml
 echo "$ sed -i -e s/NAME/$NAME-$NAMESPACE/g draft.toml"
 sed -i -e "s/NAME/$NAME-$NAMESPACE/g" draft.toml
 
-echo "$ draft up"
-draft up
+echo "$ draft up -e $NAMESPACE"
+draft up -e $NAMESPACE
