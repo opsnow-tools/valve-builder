@@ -6,7 +6,7 @@ helm version --client --short
 echo "$ helm init --client-only"
 helm init --client-only
 
-CHARTMUSEUM=$(kubectl get ing -n ${1:-devops} -o wide | grep chartmuseum | awk '{print $2}')
+CHARTMUSEUM=$(cat ${HOME}/CHARTMUSEUM)
 
 if [ ! -z ${CHARTMUSEUM} ]; then
     echo "$ helm repo add chartmuseum https://${CHARTMUSEUM}"
@@ -21,7 +21,7 @@ helm repo update
 
 PLUGIN=$(helm plugin list | grep push | wc -l | xargs)
 
-if [ "${PLUGIN}" == "0" ]; then
+if [ "x${PLUGIN}" == "x0" ]; then
     echo "$ helm plugin install https://github.com/chartmuseum/helm-push"
     helm plugin install https://github.com/chartmuseum/helm-push
 fi

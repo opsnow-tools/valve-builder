@@ -6,7 +6,7 @@ draft version --short
 echo "$ draft init"
 draft init
 
-REGISTRY=$(kubectl get ing -n ${1:-devops} -o wide | grep docker-registry | awk '{print $2}')
+REGISTRY=$(cat ${HOME}/REGISTRY)
 
 if [ ! -z ${REGISTRY} ]; then
     echo "$ draft config set registry ${REGISTRY}"

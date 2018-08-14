@@ -28,7 +28,7 @@ get_version() {
         printf "0.0.${VERSION}-${BRANCH}" > ${HOME}/VERSION
     fi
 
-    echo "$ VERSION: $(cat ${HOME}/VERSION)"
+    echo "# VERSION: $(cat ${HOME}/VERSION)"
 }
 
 get_domain() {
@@ -50,7 +50,7 @@ get_domain() {
     fi
 
     printf "${DOMAIN}" > ${HOME}/${SAVE}
-    echo "$ ${SAVE}: $(cat ${HOME}/${SAVE})"
+    echo "# ${SAVE}: $(cat ${HOME}/${SAVE})"
 }
 
 get_maven_mirror() {
