@@ -15,6 +15,8 @@ if [ ! -z ${NAME} ] && [ -d charts/$NAME ]; then
     echo "$ helm lint ."
     helm lint .
 
+    CHARTMUSEUM=$(cat ${HOME}/CHARTMUSEUM)
+
     if [ ! -z ${CHARTMUSEUM} ]; then
         echo "$ helm push . chartmuseum"
         helm push . chartmuseum
