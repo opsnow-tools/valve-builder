@@ -5,6 +5,6 @@ FROM maven:slim
 ENV TZ Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt-get install git zip curl bash openssl ca-certificates
+RUN apt-get install git curl bash openssl ca-certificates
 
 COPY extra/settings.xml /root/.m2/
