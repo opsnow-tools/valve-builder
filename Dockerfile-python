@@ -1,13 +1,11 @@
 # Dockerfile
 
-FROM python:alpine
+FROM python:slim
 
 ENV TZ Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apk --no-cache update && \
-    apk --no-cache add git zip curl docker bash openssl ca-certificates && \
-    rm -rf /var/cache/apk/* && \
+RUN apt-get install git zip curl docker openssl ca-certificates && \
     pip install awscli
 
 WORKDIR /root
