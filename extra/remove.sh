@@ -2,16 +2,16 @@
 
 SHELL_DIR=$(dirname "$0")
 
-IMAGE_NAME=${1}
+NAME=${1}
 NAMESPACE=${2:-default}
 
 ${SHELL_DIR}/helm-init.sh
 
-echo "$ helm search $IMAGE_NAME"
-helm search $IMAGE_NAME
+echo "$ helm search $NAME"
+helm search $NAME
 
-echo "$ helm history $IMAGE_NAME-$NAMESPACE"
-helm history $IMAGE_NAME-$NAMESPACE
+echo "$ helm history $NAME-$NAMESPACE"
+helm history $NAME-$NAMESPACE
 
-echo "$ helm delete --purge $IMAGE_NAME-$NAMESPACE"
-helm delete --purge $IMAGE_NAME-$NAMESPACE
+echo "$ helm delete --purge $NAME-$NAMESPACE"
+helm delete --purge $NAME-$NAMESPACE

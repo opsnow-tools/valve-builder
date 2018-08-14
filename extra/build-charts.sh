@@ -2,14 +2,15 @@
 
 SHELL_DIR=$(dirname "$0")
 
-IMAGE_NAME=${1}
-NAMESPACE=${2:-devops}
+NAME=$(cat ${HOME}/NAME)
+
+NAMESPACE=${1:-devops}
 
 ${SHELL_DIR}/helm-init.sh
 
-if [ ! -z ${IMAGE_NAME} ] && [ -d charts/$IMAGE_NAME ]; then
-    echo "$ charts/$IMAGE_NAME"
-    cd charts/$IMAGE_NAME
+if [ ! -z ${NAME} ] && [ -d charts/$NAME ]; then
+    echo "$ charts/$NAME"
+    cd charts/$NAME
 
     echo "$ helm lint ."
     helm lint .
@@ -22,6 +23,6 @@ if [ ! -z ${IMAGE_NAME} ] && [ -d charts/$IMAGE_NAME ]; then
     echo "$ helm repo update"
     helm repo update
 
-    echo "$ helm search $IMAGE_NAME"
-    helm search $IMAGE_NAME
+    echo "$ helm search $NAME"
+    helm search $NAME
 fi
