@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
 IMAGE_NAME=${1}
 
-REGISTRY = readFile "/home/jenkins/REGISTRY"
-VERSION = readFile "/home/jenkins/VERSION"
+REGISTRY=$(cat ${HOME}/REGISTRY)
+VERSION=$(cat ${HOME}/VERSION)
 
 if [ -f Dockerfile ]; then
     echo "$ docker build -t $REGISTRY/$IMAGE_NAME:$VERSION ."
