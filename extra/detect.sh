@@ -1,5 +1,7 @@
 #!/bin/bash
 
+IMAGE_NAME=${1}
+
 get_language() {
     FILE=${1}
     LANG=${2}
@@ -23,6 +25,10 @@ cat ${HOME}/SOURCE_LANG > /dev/null 2>&1 || printf "" > ${HOME}/SOURCE_LANG
 
 echo "# SOURCE_LANG: $(cat ${HOME}/SOURCE_LANG)"
 echo "# SOURCE_ROOT: $(cat ${HOME}/SOURCE_ROOT)"
+
+VERSION=$(cat ${HOME}/VERSION)
+BASE_DOMAIN=$(cat ${HOME}/BASE_DOMAIN)
+REGISTRY=$(cat ${HOME}/REGISTRY)
 
 if [ -f charts/acme/Chart.yaml ]; then
     echo "$ sed -i -e s/name: .*/name: $IMAGE_NAME/ charts/acme/Chart.yaml"
