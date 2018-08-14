@@ -6,7 +6,7 @@ ENV TZ Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && \
-    apt-get install -y bash curl tar git jq docker openssl ca-certificates python-pip && \
+    apt-get install -y bash curl tar git jq openssl ca-certificates python-pip && \
     pip install --upgrade --user awscli
 
 RUN KUBECTL=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt) && \
@@ -30,7 +30,5 @@ RUN ISTIOCTL=$(curl -s https://api.github.com/repos/istio/istio/releases/latest 
     mv istio-${ISTIOCTL}/bin/istioctl /usr/local/bin/istioctl
 
 COPY extra/ /root/extra/
-
-WORKDIR /root
 
 ENTRYPOINT ["bash"]

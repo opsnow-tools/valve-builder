@@ -5,4 +5,4 @@ FROM golang:stretch
 ENV TZ Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt-get install git zip curl docker bash openssl ca-certificates
+RUN apt-get install git zip curl bash openssl ca-certificates
