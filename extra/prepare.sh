@@ -1,7 +1,35 @@
 #!/bin/bash
 
-NAMESPACE=${1:-devops}
+NAME=${1:-sample}
+BRANCH=${2:-master}
+NAMESPACE=${3:-devops}
 BASE_DOMAIN=
+
+get_version() {
+    VERSION=
+    REVISION=
+
+    NODE=$(kubectl get ing -n default -o wide | grep sample-node | head -1 | awk '{print $2}')
+
+    if [ ! -z ${NODE} ]; then
+        VERSION=$(curl -sL -X POST http://${NODE}/counter/${NAME} | xargs)
+    fi
+
+    if [ -z ${VERSION} ]; then
+        VERSION=0
+        REVISION=$(TZ=Asia/Seoul date +%Y%m%d-%H%M%S)
+    else
+        REVISION=$(git rev-parse --short=6 HEAD)
+    fi
+
+    if [ "${BRANCH}" == "master" ]; then
+        printf "0.1.${VERSION}-${REVISION}" > ${HOME}/VERSION
+    else
+        printf "0.0.${VERSION}-${BRANCH}" > ${HOME}/VERSION
+    fi
+
+    echo "# VERSION: $(cat ${HOME}/VERSION)"
+}
 
 get_domain() {
     NAME=${1}
@@ -36,6 +64,8 @@ get_maven_mirror() {
         sed -i "s|<!-- ### configured mirrors ### -->|${MIRROR}|" ${HOME}/settings.xml
     fi
 }
+
+get_version
 
 get_domain jenkins JENKINS
 get_domain chartmuseum CHARTMUSEUM
