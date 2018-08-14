@@ -36,17 +36,17 @@ if [ ! -z ${IMAGE_NAME} ] && [ -d charts/$IMAGE_NAME ]; then
     echo "$ charts/$IMAGE_NAME"
     cd charts/$IMAGE_NAME
 
-    echo "helm lint ."
+    echo "$ helm lint ."
     helm lint .
 
     if [ ! -z ${CHARTMUSEUM} ]; then
-        echo "helm push . chartmuseum"
+        echo "$ helm push . chartmuseum"
         helm push . chartmuseum
     fi
 
-    echo "helm repo update"
+    echo "$ helm repo update"
     helm repo update
 
-    echo "helm search $IMAGE_NAME"
+    echo "$ helm search $IMAGE_NAME"
     helm search $IMAGE_NAME
 fi
