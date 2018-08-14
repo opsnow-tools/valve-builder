@@ -5,6 +5,12 @@ BRANCH=${2:-master}
 NAMESPACE=${3:-devops}
 BASE_DOMAIN=
 
+printf "${NAME}" > ${HOME}/NAME
+echo "# NAME: $(cat ${HOME}/NAME)"
+
+printf "${BRANCH}" > ${HOME}/BRANCH
+echo "# BRANCH: $(cat ${HOME}/BRANCH)"
+
 get_version() {
     VERSION=
     REVISION=
