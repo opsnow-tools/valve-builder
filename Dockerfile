@@ -6,7 +6,7 @@ ENV TZ Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && \
-    apt-get install git curl tar bash openssl ca-certificates && \
+    apt-get install -y git curl tar bash openssl ca-certificates && \
     pip install awscli
 
 RUN JQ=$(curl -s https://api.github.com/repos/stedolan/jq/releases/latest | jq --raw-output '.tag_name') && \
