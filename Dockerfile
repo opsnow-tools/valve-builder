@@ -1,12 +1,11 @@
 # Dockerfile
 
-#FROM ubuntu:16.04
 FROM python:slim
 
 ENV TZ Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt-get install -y git curl bash tar jq openssl ca-certificates python-pip && \
+RUN apt-get install -y git curl bash tar jq openssl ca-certificates && \
     pip install awscli
 
 RUN KUBECTL=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt) && \
