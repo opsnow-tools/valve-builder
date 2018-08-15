@@ -1,13 +1,13 @@
 # Dockerfile
 
-FROM ubuntu:16.04
+#FROM ubuntu:16.04
+FROM python:slim
 
 ENV TZ Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt-get update && \
-    apt-get install -y git curl bash tar jq openssl ca-certificates python-pip && \
-    pip install --upgrade --user awscli
+RUN apt-get install -y git curl bash tar jq openssl ca-certificates python-pip && \
+    pip install awscli
 
 RUN KUBECTL=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt) && \
     curl -sLO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL}/bin/linux/amd64/kubectl && \
@@ -21,9 +21,9 @@ RUN DRAFT=$(curl -s https://api.github.com/repos/Azure/draft/releases/latest | j
     curl -sL https://azuredraft.blob.core.windows.net/draft/draft-${DRAFT}-linux-amd64.tar.gz | tar xz && \
     mv linux-amd64/draft /usr/local/bin/draft
 
-RUN SKAFFOLD=$(curl -s https://api.github.com/repos/GoogleContainerTools/skaffold/releases/latest | jq --raw-output '.tag_name') && \
-    curl -sLO https://storage.googleapis.com/skaffold/releases/${SKAFFOLD}/skaffold-linux-amd64 && \
-    chmod +x skaffold-linux-amd64 && mv skaffold-linux-amd64 /usr/local/bin/skaffold
+#RUN SKAFFOLD=$(curl -s https://api.github.com/repos/GoogleContainerTools/skaffold/releases/latest | jq --raw-output '.tag_name') && \
+#    curl -sLO https://storage.googleapis.com/skaffold/releases/${SKAFFOLD}/skaffold-linux-amd64 && \
+#    chmod +x skaffold-linux-amd64 && mv skaffold-linux-amd64 /usr/local/bin/skaffold
 
 RUN ISTIOCTL=$(curl -s https://api.github.com/repos/istio/istio/releases/latest | jq --raw-output '.tag_name') && \
     curl -sL https://github.com/istio/istio/releases/download/${ISTIOCTL}/istio-${ISTIOCTL}-linux.tar.gz | tar xz && \
