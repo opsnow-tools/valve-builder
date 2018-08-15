@@ -6,12 +6,12 @@ ENV TZ Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && \
-    apt-get install -y git curl tar bash openssl ca-certificates && \
+    apt-get install -y git curl jq && \
     pip install awscli
 
-RUN JQ=$(curl -s https://api.github.com/repos/stedolan/jq/releases/latest | jq --raw-output '.tag_name') && \
-    curl -sLO https://github.com/stedolan/jq/releases/download/${JQ}/jq-linux64 && \
-    chmod +x jq-linux64 && mv jq-linux64 /usr/local/bin/jq
+#RUN JQ=$(curl -s https://api.github.com/repos/stedolan/jq/releases/latest | jq --raw-output '.tag_name') && \
+#    curl -sLO https://github.com/stedolan/jq/releases/download/${JQ}/jq-linux64 && \
+#    chmod +x jq-linux64 && mv jq-linux64 /usr/local/bin/jq
 
 RUN KUBECTL=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt) && \
     curl -sLO https://storage.googleapis.com/kubernetes-release/release/${KUBECTL}/bin/linux/amd64/kubectl && \
