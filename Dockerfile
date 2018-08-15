@@ -5,7 +5,7 @@ FROM python:slim
 ENV TZ Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN apt-get install -y git curl bash tar && \
+RUN apt-get install git curl bash tar && \
     pip install awscli
 
 RUN JQ=$(curl -s https://api.github.com/repos/stedolan/jq/releases/latest | jq --raw-output '.tag_name') && \
