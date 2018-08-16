@@ -10,7 +10,7 @@ mkdir -p /root/.ssh
 # echo "Host *" > /root/.ssh/config
 # echo "    StrictHostKeyChecking no" >> /root/.ssh/config
 
-SECRET=$(kubectl get secret ${NAME} -n ${NAMESPACE} -o json | jq '.data."${TYPE}"' --raw-output)
+SECRET=$(kubectl get secret ${NAME} -n ${NAMESPACE} -o json | jq -r '.data."${TYPE}"')
 
 if [ ! -z ${SECRET} ]; then
     echo "${SECRET}" | base64 --decode > ${DIST}
