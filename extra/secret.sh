@@ -1,8 +1,8 @@
 #!/bin/bash
 
 NAME=${1:-sample}
-NAMESPACE=${2:-devops}
-TYPE=${3:-ssh-privatekey}
+TYPE=${2:-ssh-privatekey}
+NAMESPACE=${3:-devops}
 
 mkdir -p /root/.ssh
 
