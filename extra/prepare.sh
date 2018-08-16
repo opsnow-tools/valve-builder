@@ -15,7 +15,8 @@ get_domain() {
     NAME=${1}
     SAVE=${2}
 
-    DOMAIN=$(kubectl get ing -n ${NAMESPACE} -o wide | grep ${NAME} | head -1 | awk '{print $2}' | cut -d',' -f1)
+    # DOMAIN=$(kubectl get ing -n ${NAMESPACE} -o wide | grep ${NAME} | head -1 | awk '{print $2}' | cut -d',' -f1)
+    DOMAIN=$(kubectl get ing ${NAME} -n ${NAMESPACE} -o json | jq '.spec.rules[0].host' --raw-output)
 
     if [ ! -z ${DOMAIN} ]; then
         if [ "${NAME}" == "jenkins" ]; then

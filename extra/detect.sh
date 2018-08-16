@@ -11,7 +11,8 @@ get_version() {
     PATCH=
     REVISION=
 
-    SAMPLE=$(kubectl get ing -n default -o wide | grep sample-node | head -1 | awk '{print $2}')
+    # SAMPLE=$(kubectl get ing -n default -o wide | grep sample-node | head -1 | awk '{print $2}')
+    SAMPLE=$(kubectl get ing sample-node -n default -o json | jq '.spec.rules[0].host' --raw-output)
 
     if [ ! -z ${SAMPLE} ]; then
         PATCH=$(curl -sL -X POST http://${SAMPLE}/counter/${NAME} | xargs)
