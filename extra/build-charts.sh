@@ -14,7 +14,7 @@ fi
 echo "$ cd charts/$NAME"
 cd charts/$NAME
 
-echo "$ helm lint ."
+echo "$ helm lint . --strict"
 helm lint . --strict
 
 CHARTMUSEUM=$(cat ${HOME}/CHARTMUSEUM)
