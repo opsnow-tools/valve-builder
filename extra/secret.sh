@@ -4,7 +4,13 @@ NAME=${1:-sample}
 NAMESPACE=${2:-devops}
 
 mkdir -p ~/.ssh
+
+echo "Host *" > ~/.ssh/config
+echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+
 echo "-----BEGIN RSA PRIVATE KEY-----" > ~/.ssh/id_rsa
 kubectl get secret ${NAME} -n ${NAMESPACE} -o yaml | grep ssh-privatekey | awk '{print $2}' >> ~/.ssh/id_rsa
 echo "-----END RSA PRIVATE KEY-----" >> ~/.ssh/id_rsa
 chmod 600 ~/.ssh/id_rsa
+
+echo "" > ~/.ssh/known_hosts
