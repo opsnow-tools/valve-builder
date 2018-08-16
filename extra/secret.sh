@@ -3,12 +3,12 @@
 NAME=${1:-sample}
 NAMESPACE=${2:-devops}
 
-mkdir -p ~/.ssh
+mkdir -p /root/.ssh
 
-echo "Host *" > ~/.ssh/config
-echo "    StrictHostKeyChecking no" >> ~/.ssh/config
+echo "Host *" > /root/.ssh/config
+echo "    StrictHostKeyChecking no" >> /root/.ssh/config
 
-kubectl get secret ${NAME} -n ${NAMESPACE} -o yaml | grep ssh-privatekey | awk '{print $2}' | base64 --decode > ~/.ssh/id_rsa
-chmod 600 ~/.ssh/id_rsa
+kubectl get secret ${NAME} -n ${NAMESPACE} -o yaml | grep ssh-privatekey | awk '{print $2}' | base64 --decode > /root/.ssh/id_rsa
+chmod 600 /root/.ssh/id_rsa
 
-echo "" > ~/.ssh/known_hosts
+echo "" > /root/.ssh/known_hosts
