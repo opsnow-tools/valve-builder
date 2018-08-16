@@ -24,8 +24,10 @@ get_version() {
     if [ -z ${VERSION} ]; then
         VERSION=0
         REVISION=$(TZ=Asia/Seoul date +%Y%m%d-%H%M%S)
-    else
+    elif [ -d .git ]; then
         REVISION=$(git rev-parse --short=6 HEAD)
+    else
+        REVISION="sample"
     fi
 
     if [ "${BRANCH}" == "master" ]; then
