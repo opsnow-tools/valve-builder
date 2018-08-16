@@ -6,7 +6,7 @@ ENV TZ Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && \
-    apt-get install -y git curl jq && \
+    apt-get install -y git curl zip jq && \
     pip install awscli
 
 RUN KUBECTL=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt) && \
@@ -24,6 +24,11 @@ RUN DRAFT=$(curl -s https://api.github.com/repos/Azure/draft/releases/latest | j
 RUN ISTIOCTL=$(curl -s https://api.github.com/repos/istio/istio/releases/latest | jq --raw-output '.tag_name') && \
     curl -sL https://github.com/istio/istio/releases/download/${ISTIOCTL}/istio-${ISTIOCTL}-linux.tar.gz | tar xz && \
     mv istio-${ISTIOCTL}/bin/istioctl /usr/local/bin/istioctl
+
+RUN TERRAFORM=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | jq --raw-output '.tag_name' | cut -c 2-) && \
+    curl -sLO https://releases.hashicorp.com/terraform/${TERRAFORM}/terraform_${TERRAFORM}_linux_amd64.zip && \
+    unzip terraform_${TERRAFORM}_linux_amd64.zip && rm -rf terraform_${TERRAFORM}_linux_amd64.zip && \
+    mv terraform /usr/local/bin/terraform
 
 COPY extra/ /root/extra/
 
