@@ -13,5 +13,5 @@ helm upgrade --install $NAME-$NAMESPACE chartmuseum/$NAME \
             --version $VERSION --namespace $NAMESPACE --devel \
             --set fullnameOverride=$NAME-$NAMESPACE
 
-echo "$ helm history $NAME"
-helm history $NAME
+echo "$ helm history $NAME-$NAMESPACE"
+helm history $NAME-$NAMESPACE
