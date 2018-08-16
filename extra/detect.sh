@@ -1,6 +1,7 @@
 #!/bin/bash
 
 NAME=$(cat ${HOME}/NAME)
+BRANCH=$(cat ${HOME}/BRANCH)
 BASE_DOMAIN=$(cat ${HOME}/BASE_DOMAIN)
 REGISTRY=$(cat ${HOME}/REGISTRY)
 
