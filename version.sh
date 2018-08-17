@@ -18,7 +18,14 @@ get_version() {
 
     NOW=$(cat versions/${NAME})
 
-    if [ "${NAME}" == "kubectl" ]; then
+    if [ "${NAME}" == "awscli" ]; then
+        mkdir -p target
+
+        pushd target
+        curl -sLO https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
+        unzip awscli-bundle.zip
+        popd
+    elif [ "${NAME}" == "kubectl" ]; then
         NEW=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt | xargs)
     else
         NEW=$(curl -s https://api.github.com/repos/${REPO}/${NAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
@@ -27,7 +34,7 @@ get_version() {
         NEW=$(echo "${NEW}" | cut -c 2-)
     fi
 
-    echo "${REPO}/${NAME}: ${NOW} ${NEW}"
+    echo "${NAME}: ${NOW} ${NEW}"
 
     if [ "${NOW}" != "${NEW}" ]; then
         printf "${NEW}" > versions/${NAME}
@@ -36,6 +43,7 @@ get_version() {
     fi
 }
 
+get_version aws awscli
 get_version kubernetes kubectl
 # get_version kubernetes kops
 get_version helm helm
