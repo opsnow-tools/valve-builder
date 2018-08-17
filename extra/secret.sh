@@ -13,7 +13,7 @@ mkdir -p /root/.ssh
 SECRET=$(kubectl get secret ${NAME} -n ${NAMESPACE} -o json | jq -r '.data."${TYPE}"')
 
 if [ ! -z ${SECRET} ]; then
-    echo "${SECRET}" | base64 --decode > ${DIST}
+    echo "${SECRET}" | base64 -d > ${DIST}
     chmod 600 ${DIST}
 fi
 
