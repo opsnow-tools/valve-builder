@@ -23,7 +23,7 @@ if [ ! -z ${SECRET} ]; then
     fi
 fi
 
-echo "git clone ${REPO} -b ${BRANCH} ."
+echo "$ git clone ${REPO} -b ${BRANCH} ."
 git clone ${REPO} -b ${BRANCH} .
 
 ${SHELL_DIR}/detect.sh
