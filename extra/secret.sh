@@ -17,8 +17,6 @@ fi
 SECRET=$(kubectl get secret ${NAME} -n ${NAMESPACE} -o json | jq '.data' | grep ${TYPE} | cut -d'"' -f4)
 
 if [ ! -z ${SECRET} ]; then
-    # echo "${SECRET}" | base64 -d > ${DIST}
-    echo "${SECRET}" > /tmp/encoded
-    base64 -d /tmp/encoded > ${DIST}
+    echo "${SECRET}" | base64 -d > ${DIST}
     chmod 600 ${DIST}
 fi
