@@ -4,7 +4,7 @@ FROM alpine
 
 RUN apk -v --update add python py-pip groff less mailcap bash curl zip jq
 
-ENV awscli 1
+ENV awscli 1.15.80
 ENV kubectl v1.11.2
 ENV helm v2.9.1
 ENV draft v0.15.0
