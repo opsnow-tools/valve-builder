@@ -7,9 +7,6 @@ NAMESPACE=${4:-"devops"}
 
 mkdir -p /root/.ssh
 
-# echo "Host *" > /root/.ssh/config
-# echo "    StrictHostKeyChecking no" >> /root/.ssh/config
-
 SECRET=$(kubectl get secret ${NAME} -n ${NAMESPACE} -o json | jq -r '.data."${TYPE}"')
 
 if [ ! -z ${SECRET} ]; then
@@ -17,4 +14,9 @@ if [ ! -z ${SECRET} ]; then
     chmod 600 ${DIST}
 fi
 
-# echo "" > /root/.ssh/known_hosts
+if [ "${TYPE}" == "ssh-privatekey" ]; then
+    echo "Host *" > /root/.ssh/config
+    echo "    StrictHostKeyChecking no" >> /root/.ssh/config
+
+    echo "" > /root/.ssh/known_hosts
+fi
