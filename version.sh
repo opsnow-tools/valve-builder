@@ -26,7 +26,7 @@ get_version() {
         unzip awscli-bundle.zip
         popd
 
-        NEW=$(ls target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//')
+        NEW=$(ls target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
     elif [ "${NAME}" == "kubectl" ]; then
         NEW=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt | xargs)
     else
