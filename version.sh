@@ -31,7 +31,7 @@ get_version() {
 
     if [ "${NOW}" != "${NEW}" ]; then
         printf "${NEW}" > versions/${NAME}
-        sed -i -e "s/ENV ${NAME} .*/ENV VERSION ${NEW}/g" Dockerfile
+        sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" Dockerfile
         MESSAGE="${NAME} ${NEW}"
     fi
 }
