@@ -14,7 +14,7 @@ if [ "${TYPE}" == "ssh-privatekey" ]; then
     echo "" > /root/.ssh/known_hosts
 fi
 
-SECRET=$(kubectl get secret ${NAME} -n ${NAMESPACE} -o json | jq -r '.data."${TYPE}"')
+SECRET=$(kubectl get secret ${NAME} -n ${NAMESPACE} -o json | jq '.data' | grep ${TYPE} | cut -d'"' -f4)
 
 if [ ! -z ${SECRET} ]; then
     # echo "${SECRET}" | base64 -d > ${DIST}
