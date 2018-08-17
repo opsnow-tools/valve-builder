@@ -5,9 +5,9 @@ FROM alpine
 RUN apk -v --update add python py-pip groff less mailcap bash curl zip jq
 
 ENV awscli 1
-ENV kubectl 1
-ENV helm 1
-ENV draft 1
+ENV kubectl v1.11.2
+ENV helm v2.9.1
+ENV draft v0.15.0
 
 RUN pip install --upgrade awscli==${awscli} && \
     apk -v --purge del py-pip && \
