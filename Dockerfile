@@ -4,9 +4,9 @@ FROM alpine
 
 RUN apk add -v --update python py-pip bash curl git zip jq openssh
 
-ENV awscli 1.15.80
+ENV awscli 1.15.81
 ENV kubectl v1.11.2
-ENV helm v2.9.1
+ENV helm v2.10.0
 ENV draft v0.15.0
 
 RUN pip install --upgrade awscli==${awscli} && \
