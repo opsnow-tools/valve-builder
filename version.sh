@@ -39,7 +39,7 @@ get_version() {
         NEW=$(echo "${NEW}" | cut -c 2-)
     fi
 
-    echo "${NAME}: [${NOW}] [${NEW}]"
+    echo "# ${NAME}: [${NOW}] [${NEW}]"
 
     if [ "${NOW}" != "${NEW}" ]; then
         CHANGED=true
@@ -47,7 +47,7 @@ get_version() {
         printf "${NEW}" > versions/${NAME}
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" Dockerfile
 
-        echo "# ${NAME} ${NEW}"
+        echo "# ${NAME}: ${NEW}"
 
         git add --all
         git commit -m "${NAME} ${NEW}"
