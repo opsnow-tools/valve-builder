@@ -39,7 +39,7 @@ get_version() {
         NEW=$(echo "${NEW}" | cut -c 2-)
     fi
 
-    printf '# %-10s: %-10s %-10s\n' "${NAME}" "${NOW}" "${NEW}"
+    printf '# %-10s %-10s %-10s\n' "${NAME}" "${NOW}" "${NEW}"
 
     if [ "${NOW}" != "${NEW}" ]; then
         CHANGED=true
