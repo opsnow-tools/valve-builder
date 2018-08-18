@@ -3,10 +3,13 @@
 USERNAME=${1}
 REPONAME=${2}
 GITHUB_TOKEN=${3}
-MESSAGE=
+CHANGED=
 
 echo "USERNAME: ${USERNAME}"
 echo "REPONAME: ${REPONAME}"
+
+git config --global user.name "bot"
+git config --global user.email "ops@nalbam.com"
 
 get_version() {
     REPO=$1
@@ -39,9 +42,13 @@ get_version() {
     echo "${NAME}: ${NOW} ${NEW}"
 
     if [ "${NOW}" != "${NEW}" ]; then
+        CHANGED=true
+
         printf "${NEW}" > versions/${NAME}
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" Dockerfile
-        MESSAGE="${NAME} ${NEW}"
+
+        git add --all
+        git commit -m "${NAME} ${NEW}"
     fi
 }
 
@@ -54,11 +61,6 @@ get_version Azure draft
 # get_version hashicorp terraform true
 # get_version istio istio
 
-if [ "x${MESSAGE}" != "x" ]; then
-    git config --global user.name "bot"
-    git config --global user.email "ops@nalbam.com"
-
-    git add --all
-    git commit -m "${MESSAGE}"
+if [ ! -z ${CHANGED} ]; then
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
 fi
