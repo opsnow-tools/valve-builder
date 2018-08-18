@@ -4,7 +4,9 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: ./version.sh $CIRCLE_PROJECT_USERNAME $CIRCLE_PROJECT_REPONAME $GITHUB_TOKEN
+      - run:
+          name: Check versions
+          command: ./version.sh $CIRCLE_PROJECT_USERNAME $CIRCLE_PROJECT_REPONAME $GITHUB_TOKEN
 
 workflows:
   version: 2
