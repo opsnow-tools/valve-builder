@@ -19,7 +19,7 @@ get_version() {
     mkdir -p versions
     touch versions/${NAME}
 
-    NOW=$(cat versions/${NAME})
+    NOW=$(cat versions/${NAME} | xargs)
 
     if [ "${NAME}" == "awscli" ]; then
         mkdir -p target
@@ -39,13 +39,15 @@ get_version() {
         NEW=$(echo "${NEW}" | cut -c 2-)
     fi
 
-    echo "${NAME}: ${NOW} ${NEW}"
+    echo "${NAME}: [${NOW}] [${NEW}]"
 
     if [ "${NOW}" != "${NEW}" ]; then
         CHANGED=true
 
         printf "${NEW}" > versions/${NAME}
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" Dockerfile
+
+        echo "# ${NAME} ${NEW}"
 
         git add --all
         git commit -m "${NAME} ${NEW}"
@@ -62,5 +64,6 @@ get_version Azure draft
 # get_version istio istio
 
 if [ ! -z ${CHANGED} ]; then
+    echo "# git push github.com/${USERNAME}/${REPONAME}"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
 fi
