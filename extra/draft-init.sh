@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "$ draft version --short"
-draft version --short
+echo "$ draft version"
+draft version
 
 echo "$ draft init"
 draft init

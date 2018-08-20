@@ -8,19 +8,9 @@ SECRET=${3}
 NAMESPACE=${4:-"devops"}
 
 if [ ! -z ${SECRET} ]; then
-    mkdir -p /root/.ssh
-
-    echo "Host *" > /root/.ssh/config
-    echo "    StrictHostKeyChecking no" >> /root/.ssh/config
-
-    echo "" > /root/.ssh/known_hosts
-
-    ENCODED=$(kubectl get secret ${SECRET} -n ${NAMESPACE} -o json | jq '.data' | grep ssh-privatekey | cut -d'"' -f4)
-
-    if [ ! -z ${ENCODED} ]; then
-        echo "${ENCODED}" | base64 -d > /root/.ssh/id_rsa
-        chmod 600 /root/.ssh/id_rsa
-    fi
+    SECRET_TYPE="ssh-privatekey"
+    SECRET_DIST="/root/.ssh/id_rsa"
+    ${SHELL_DIR}/secret.sh ${SECRET} ${SECRET_TYPE} ${SECRET_DIST} ${NAMESPACE}
 fi
 
 echo "$ git clone ${REPO} -b ${BRANCH} ."

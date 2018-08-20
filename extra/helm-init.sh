@@ -1,7 +1,7 @@
 #!/bin/bash
 
-echo "$ helm version --client --short"
-helm version --client --short
+echo "$ helm version"
+helm version
 
 echo "$ helm init --client-only"
 helm init --client-only
