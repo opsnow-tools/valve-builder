@@ -23,5 +23,6 @@ RUN curl -sL https://azuredraft.blob.core.windows.net/draft/draft-${draft}-linux
     mv linux-amd64/draft /usr/local/bin/draft
 
 COPY extra/ /root/extra/
+COPY m2/ /root/.m2/
 
 ENTRYPOINT ["bash"]

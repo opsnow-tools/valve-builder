@@ -1,10 +1,10 @@
 OS := $(shell uname)
 
-NAME := $(shell cat $(HOME)NAME)
-VERSION := $(shell cat $(HOME)VERSION)
+NAME := $(shell cat $(HOME)/NAME)
+VERSION := $(shell cat $(HOME)/VERSION)
 
-REGISTRY := $(shell cat $(HOME)REGISTRY)
-CHARTMUSEUM := $(shell cat $(HOME)CHARTMUSEUM)
+REGISTRY := $(shell cat $(HOME)/REGISTRY)
+CHARTMUSEUM := $(shell cat $(HOME)/CHARTMUSEUM)
 
 draft-init:
 	draft version
@@ -15,8 +15,8 @@ endif
 
 draft-up: draft-init
 	sed -i -e "s/NAMESPACE/$(NAMESPACE)/g" draft.toml
-	sed -i -e "s/NAME/$(NAME)-$(NAMESPACE))/g" draft.toml
-	draft up -e $(NAMESPACE))
+	sed -i -e "s/NAME/$(NAME)-$(NAMESPACE)/g" draft.toml
+	draft up -e $(NAMESPACE)
 
 helm-init:
 	helm version
