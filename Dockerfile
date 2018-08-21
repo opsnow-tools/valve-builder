@@ -5,7 +5,7 @@ FROM alpine
 RUN apk add -v --update python py-pip bash curl git zip jq make openssh
 
 ENV awscli 1.15.82
-ENV toaster 0.0.1
+ENV toaster v0.0.1
 ENV kubectl v1.11.2
 ENV helm v2.10.0
 ENV draft v0.15.0
