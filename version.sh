@@ -5,9 +5,6 @@ REPONAME=${2:-builder}
 GITHUB_TOKEN=${3}
 CHANGED=
 
-echo "USERNAME: ${USERNAME}"
-echo "REPONAME: ${REPONAME}"
-
 git config --global user.name "bot"
 git config --global user.email "ops@nalbam.com"
 
