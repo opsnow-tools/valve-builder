@@ -1,7 +1,7 @@
 #!/bin/bash
 
-USERNAME=${1}
-REPONAME=${2}
+USERNAME=${1:-nalbam}
+REPONAME=${2:-builder}
 GITHUB_TOKEN=${3}
 CHANGED=
 
@@ -22,6 +22,7 @@ get_version() {
     NOW=$(cat versions/${NAME} | xargs)
 
     if [ "${NAME}" == "awscli" ]; then
+        rm -rf target
         mkdir -p target
 
         pushd target
@@ -47,7 +48,7 @@ get_version() {
         printf "${NEW}" > versions/${NAME}
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" Dockerfile
 
-        printf '# %-10s: %-10s\n' "${NAME}" "${NEW}"
+        printf '# %-10s %-10s\n' "${NAME}" "${NEW}"
 
         git add --all
         git commit -m "${NAME} ${NEW}"
@@ -64,7 +65,7 @@ get_version Azure draft
 # get_version hashicorp terraform true
 # get_version istio istio
 
-if [ ! -z ${CHANGED} ]; then
+if [ ! -z ${CHANGED} ] && [ ! -z ${GITHUB_TOKEN} ]; then
     echo "# git push github.com/${USERNAME}/${REPONAME}"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
 fi
