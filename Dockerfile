@@ -2,7 +2,7 @@
 
 FROM alpine
 
-RUN apk add -v --update python py-pip bash curl git zip jq make openssh
+RUN apk add -v --update python py-pip bash curl git zip jq make perl openssh
 
 ENV awscli 1.15.82
 ENV kubectl v1.11.2
