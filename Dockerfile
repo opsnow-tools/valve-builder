@@ -5,6 +5,7 @@ FROM alpine
 RUN apk add -v --update python py-pip bash curl git zip jq make openssh
 
 ENV awscli 1.15.82
+ENV toaster 0.0.1
 ENV kubectl v1.11.2
 ENV helm v2.10.0
 ENV draft v0.15.0
@@ -12,6 +13,9 @@ ENV draft v0.15.0
 RUN pip install --upgrade awscli==${awscli} && \
     apk -v --purge del py-pip && \
     rm /var/cache/apk/*
+
+RUN curl -sLO https://github.com/nalbam/toaster/releases/download/${toaster}/toaster && \
+    chmod +x toaster && mv toaster /usr/local/bin/toaster
 
 RUN curl -sLO https://storage.googleapis.com/kubernetes-release/release/${kubectl}/bin/linux/amd64/kubectl && \
     chmod +x kubectl && mv kubectl /usr/local/bin/kubectl

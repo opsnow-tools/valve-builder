@@ -55,6 +55,7 @@ get_version() {
 }
 
 get_version aws awscli
+get_version nalbam toaster
 get_version kubernetes kubectl
 # get_version kubernetes kops
 get_version helm helm
