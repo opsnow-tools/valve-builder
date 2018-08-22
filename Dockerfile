@@ -2,7 +2,7 @@
 
 FROM alpine
 
-RUN apk add -v --update python py-pip bash curl jq openssh
+RUN apk add -v --update python py-pip bash curl git jq openssh
 
 ENV awscli 1.15.83
 ENV toaster v0.0.7
