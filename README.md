@@ -1,7 +1,7 @@
 # builder
 
-[![Docker Repository on Quay](https://quay.io/repository/nalbam/builder/status "Docker Repository on Quay")](https://quay.io/repository/nalbam/builder)
+[![Docker Repository on Quay](https://quay.io/repository/opspresso/builder/status "Docker Repository on Quay")](https://quay.io/repository/opspresso/builder)
 
 ```bash
-docker pull quay.io/nalbam/builder
+docker pull opspresso/builder
 ```
