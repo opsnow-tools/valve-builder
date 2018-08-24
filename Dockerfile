@@ -1,6 +1,6 @@
 # Dockerfile
 
-FROM alpine
+FROM docker
 
 RUN apk add -v --update python py-pip bash curl git jq openssh
 

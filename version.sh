@@ -66,7 +66,7 @@ if [ ! -z ${CHANGED} ] && [ ! -z ${GITHUB_TOKEN} ]; then
     echo "# git push github.com/${USERNAME}/${REPONAME}"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
 
-    DATE=$(date +%Y%m%d)
+    DATE=$(date +%Y.%m.%d)
     echo "# git push github.com/${USERNAME}/${REPONAME} ${DATE}"
 
     git tag ${DATE}
