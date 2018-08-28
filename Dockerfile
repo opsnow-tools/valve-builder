@@ -8,7 +8,7 @@ ENV awscli 1.16.1
 ENV toaster v0.0.28
 ENV kubectl v1.11.2
 ENV helm v2.10.0
-ENV draft v0.15.0
+ENV draft v0.16.0
 
 RUN pip install --upgrade awscli==${awscli} && \
     apk -v --purge del py-pip && \
