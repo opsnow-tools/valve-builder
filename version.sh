@@ -53,12 +53,11 @@ get_version() {
 }
 
 get_version aws awscli
-get_version nalbam toaster
+# get_version nalbam toaster
 get_version kubernetes kubectl
 # get_version kubernetes kops
 get_version helm helm
 get_version Azure draft
-# get_version GoogleContainerTools skaffold
 # get_version hashicorp terraform true
 # get_version istio istio
 
