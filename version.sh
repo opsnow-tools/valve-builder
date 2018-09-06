@@ -1,22 +1,22 @@
 #!/bin/bash
 
+SHELL_DIR=$(dirname $0)
+
 USERNAME=${1:-nalbam}
 REPONAME=${2:-builder}
 GITHUB_TOKEN=${3}
-CHANGED=
 
-git config --global user.name "bot"
-git config --global user.email "ops@nalbam.com"
+CHANGED=
 
 get_version() {
     REPO=$1
     NAME=$2
     STRIP=$3
 
-    mkdir -p versions
-    touch versions/${NAME}
+    mkdir -p ${SHELL_DIR}/versions
+    touch ${SHELL_DIR}/versions/${NAME}
 
-    NOW=$(cat versions/${NAME} | xargs)
+    NOW=$(cat ${SHELL_DIR}/versions/${NAME} | xargs)
 
     if [ "${NAME}" == "awscli" ]; then
         rm -rf target
@@ -40,34 +40,35 @@ get_version() {
     printf '# %-10s %-10s %-10s\n' "${NAME}" "${NOW}" "${NEW}"
 
     if [ "${NOW}" != "${NEW}" ]; then
-        CHANGED=true
-
-        printf "${NEW}" > versions/${NAME}
+        printf "${NEW}" > ${SHELL_DIR}/versions/${NAME}
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" Dockerfile
 
         printf '# %-10s %-10s\n' "${NAME}" "${NEW}"
 
-        git add --all
-        git commit -m "${NAME} ${NEW}"
+        if [ ! -z ${GITHUB_TOKEN} ]; then
+            git add --all
+            git commit -m "${NAME} ${NEW}" > /dev/null 2>&1 || export CHANGED=true
+        fi
     fi
 }
 
+if [ ! -z ${GITHUB_TOKEN} ]; then
+    git config --global user.name "bot"
+    git config --global user.email "ops@nalbam.com"
+fi
+
 get_version aws awscli
-# get_version nalbam toaster
 get_version kubernetes kubectl
-# get_version kubernetes kops
 get_version helm helm
 get_version Azure draft
-# get_version hashicorp terraform true
-# get_version istio istio
 
 if [ ! -z ${CHANGED} ] && [ ! -z ${GITHUB_TOKEN} ]; then
-    echo "# git push github.com/${USERNAME}/${REPONAME}"
+    echo "# git push github.com/${USERNAME}/${REPONAME} master"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
 
     DATE=$(date +%Y%m%d)
-    echo "# git push github.com/${USERNAME}/${REPONAME} ${DATE}"
-
     git tag ${DATE}
+
+    echo "# git push github.com/${USERNAME}/${REPONAME} ${DATE}"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${DATE}
 fi
