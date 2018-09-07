@@ -8,7 +8,7 @@ GITHUB_TOKEN=${3}
 
 CHANGED=
 
-get_version() {
+check() {
     REPO=$1
     NAME=$2
     STRIP=$3
@@ -57,10 +57,10 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     git config --global user.email "ops@nalbam.com"
 fi
 
-get_version aws awscli
-get_version kubernetes kubectl
-get_version helm helm
-get_version Azure draft
+check aws awscli
+check kubernetes kubectl
+check helm helm
+check Azure draft
 
 if [ ! -z ${CHANGED} ] && [ ! -z ${GITHUB_TOKEN} ]; then
     echo "# git push github.com/${USERNAME}/${REPONAME} master"
