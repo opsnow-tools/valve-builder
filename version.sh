@@ -61,13 +61,13 @@ if [ "${USERNAME}" == "opspresso" ]; then
 fi
 
 if [ ! -z ${GITHUB_TOKEN} ]; then
-    # if [ "${USERNAME}" != "opspresso" ]; then
-    #     echo "# git remote add --track master opspresso github.com/opspresso/builder"
-    #     git remote add --track master opspresso https://github.com/opspresso/builder.git
+    if [ "${USERNAME}" != "opspresso" ]; then
+        echo "# git remote add --track master opspresso github.com/opspresso/builder"
+        git remote add --track master opspresso https://github.com/opspresso/builder.git
 
-    #     echo "# git pull opspresso master"
-    #     git pull opspresso master
-    # fi
+        echo "# git pull opspresso master"
+        git pull opspresso master
+    fi
 
     echo "# git push github.com/${USERNAME}/${REPONAME} master"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
