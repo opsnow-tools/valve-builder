@@ -2,7 +2,7 @@
 
 SHELL_DIR=$(dirname $0)
 
-USERNAME=${1:-nalbam}
+USERNAME=${1:-opspresso}
 REPONAME=${2:-builder}
 GITHUB_TOKEN=${3}
 
@@ -53,18 +53,30 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     git config --global user.email "ops@nalbam.com"
 fi
 
-check aws awscli
-check kubernetes kubectl
-check helm helm
-check Azure draft
+if [ "${USERNAME}" == "opspresso" ]; then
+    check aws awscli
+    check kubernetes kubectl
+    check helm helm
+    check Azure draft
+fi
 
-if [ ! -z ${CHANGED} ] && [ ! -z ${GITHUB_TOKEN} ]; then
+if [ ! -z ${GITHUB_TOKEN} ]; then
+    if [ "${USERNAME}" != "opspresso" ]; then
+        echo "# git remote add --track master opspresso github.com/opspresso/builder"
+        git remote add --track master opspresso https://github.com/opspresso/builder.git
+
+        echo "# git pull opspresso master"
+        git pull opspresso master
+    fi
+
     echo "# git push github.com/${USERNAME}/${REPONAME} master"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
 
-    DATE=$(date +%Y%m%d)
-    git tag ${DATE}
+    if [ ! -z ${CHANGED} ]; then
+        DATE=$(date +%Y%m%d)
+        git tag ${DATE}
 
-    echo "# git push github.com/${USERNAME}/${REPONAME} ${DATE}"
-    git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${DATE}
+        echo "# git push github.com/${USERNAME}/${REPONAME} ${DATE}"
+        git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${DATE}
+    fi
 fi
