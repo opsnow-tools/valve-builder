@@ -11,7 +11,6 @@ CHANGED=
 check() {
     REPO=$1
     NAME=$2
-    STRIP=$3
 
     mkdir -p ${SHELL_DIR}/versions
     touch ${SHELL_DIR}/versions/${NAME}
@@ -33,21 +32,18 @@ check() {
     else
         NEW=$(curl -s https://api.github.com/repos/${REPO}/${NAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
     fi
-    if [ ! -z ${STRIP} ]; then
-        NEW=$(echo "${NEW}" | cut -c 2-)
-    fi
 
     printf '# %-10s %-10s %-10s\n' "${NAME}" "${NOW}" "${NEW}"
 
     if [ "${NOW}" != "${NEW}" ]; then
-        printf "${NEW}" > ${SHELL_DIR}/versions/${NAME}
-        sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" Dockerfile
+        CHANGED=true
 
-        printf '# %-10s %-10s\n' "${NAME}" "${NEW}"
+        printf "${NEW}" > ${SHELL_DIR}/versions/${NAME}
+        sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
 
         if [ ! -z ${GITHUB_TOKEN} ]; then
             git add --all
-            git commit -m "${NAME} ${NEW}" > /dev/null 2>&1 || export CHANGED=true
+            git commit -m "${NAME} ${NEW}"
         fi
     fi
 }
