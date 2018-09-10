@@ -25,6 +25,7 @@ check() {
         curl -sLO https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
         unzip awscli-bundle.zip
         popd
+        echo
 
         NEW=$(ls target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
     elif [ "${NAME}" == "kubectl" ]; then
@@ -66,6 +67,8 @@ if [ "${USERNAME}" == "opspresso" ]; then
 fi
 
 if [ ! -z ${GITHUB_TOKEN} ]; then
+    echo
+
     if [ "${USERNAME}" != "opspresso" ]; then
         echo "# git remote add --track master opspresso github.com/opspresso/builder"
         git remote add --track master opspresso https://github.com/opspresso/builder.git
