@@ -45,6 +45,11 @@ check() {
             git add --all
             git commit -m "${NAME} ${NEW}"
         fi
+
+        if [ ! -z ${SLACK_TOKEN} ]; then
+            ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" --color="good" --title="builder version updated" "${NAME} ${NOW} > ${NEW}"
+            echo " slack ${NAME} ${NOW} > ${NEW} "
+        fi
     fi
 }
 
@@ -64,13 +69,16 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     if [ "${USERNAME}" != "opspresso" ]; then
         echo "# git remote add --track master opspresso github.com/opspresso/builder"
         git remote add --track master opspresso https://github.com/opspresso/builder.git
+        echo
 
         echo "# git pull opspresso master"
         git pull opspresso master
+        echo
     fi
 
     echo "# git push github.com/${USERNAME}/${REPONAME} master"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
+    echo
 
     if [ ! -z ${CHANGED} ]; then
         DATE=$(date +%Y%m%d)
@@ -78,5 +86,6 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
 
         echo "# git push github.com/${USERNAME}/${REPONAME} ${DATE}"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${DATE}
+        echo
     fi
 fi
