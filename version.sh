@@ -45,18 +45,20 @@ check() {
         if [ ! -z ${GITHUB_TOKEN} ]; then
             git add --all
             git commit -m "${NAME} ${NEW}"
+            echo
         fi
 
         if [ ! -z ${SLACK_TOKEN} ]; then
-            ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" --color="good" --title="builder version updated" "${NAME} ${NOW} > ${NEW}"
+            ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" --color="good" --title="builder version updated" "`${NAME}` ${NOW} > ${NEW}"
             echo " slack ${NAME} ${NOW} > ${NEW} "
+            echo
         fi
     fi
 }
 
 if [ ! -z ${GITHUB_TOKEN} ]; then
     git config --global user.name "bot"
-    git config --global user.email "ops@nalbam.com"
+    git config --global user.email "bot@nalbam.com"
 fi
 
 if [ "${USERNAME}" == "opspresso" ]; then
