@@ -49,7 +49,8 @@ check() {
         fi
 
         if [ ! -z ${SLACK_TOKEN} ]; then
-            ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" --color="good" --title="builder version updated" "`${NAME}` ${NOW} > ${NEW}"
+            ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" \
+                --color="good" --title="builder version updated" --emoji=":construction_worker:" "`${NAME}` ${NOW} > ${NEW}"
             echo " slack ${NAME} ${NOW} > ${NEW} "
             echo
         fi
