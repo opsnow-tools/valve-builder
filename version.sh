@@ -75,12 +75,12 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
     echo
 
-    if [ ! -z ${CHANGED} ]; then
-        DATE=$(date +%Y%m%d)
-        git tag ${DATE}
+    # if [ ! -z ${CHANGED} ]; then
+    #     DATE=$(date +%Y%m%d)
+    #     git tag ${DATE}
 
-        echo "# git push github.com/${USERNAME}/${REPONAME} ${DATE}"
-        git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${DATE}
-        echo
-    fi
+    #     echo "# git push github.com/${USERNAME}/${REPONAME} ${DATE}"
+    #     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${DATE}
+    #     echo
+    # fi
 fi
