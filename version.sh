@@ -60,7 +60,7 @@ check() {
 
 if [ ! -z ${GITHUB_TOKEN} ]; then
     git config --global user.name "bot"
-    git config --global user.email "bot@nalbam.com"
+    git config --global user.email "sbl@bespinglobal.com"
 fi
 
 check aws awscli
