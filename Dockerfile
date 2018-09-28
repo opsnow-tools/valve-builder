@@ -22,6 +22,8 @@ RUN curl -sL https://storage.googleapis.com/kubernetes-helm/helm-${helm}-linux-a
 RUN curl -sL https://azuredraft.blob.core.windows.net/draft/draft-${draft}-linux-amd64.tar.gz | tar xz && \
     mv linux-amd64/draft /usr/local/bin/draft
 
+COPY slack.sh /usr/local/bin/slack
+
 COPY .m2/ /root/.m2/
 
 ENTRYPOINT ["bash"]
