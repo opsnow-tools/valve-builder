@@ -51,7 +51,7 @@ check() {
 
         if [ ! -z ${SLACK_TOKEN} ]; then
             ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" \
-                --emoji=":construction_worker:" --username="builder" \
+                --emoji=":construction_worker:" --username="valve" \
                 --color="good" --title="${REPONAME} updated" "\`${NAME}\` ${NOW} > ${NEW}"
             echo " slack ${NAME} ${NOW} > ${NEW} "
             echo
