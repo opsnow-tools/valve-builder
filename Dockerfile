@@ -22,6 +22,8 @@ RUN curl -sL https://storage.googleapis.com/kubernetes-helm/helm-${helm}-linux-a
 RUN curl -sL https://azuredraft.blob.core.windows.net/draft/draft-${draft}-linux-amd64.tar.gz | tar xz && \
     mv linux-amd64/draft /usr/local/bin/draft
 
+RUN curl -sLO https://raw.githubusercontent.com/opsnow-tools/valve-butler/master/src/com/opsnow/valve/Butler.groovy
+
 COPY slack.sh /usr/local/bin/slack
 
 COPY .m2/ /root/.m2/
