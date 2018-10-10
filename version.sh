@@ -45,7 +45,7 @@ check() {
 
         if [ ! -z ${SLACK_TOKEN} ]; then
             FOOTER="<https://github.com/${REPO}/${GIT_NAME}|${REPO}/${GIT_NAME}>"
-            ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" \
+            ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" --channel="tools" \
                 --emoji=":construction_worker:" --username="valve" \
                 --footer="${FOOTER}" --footer_icon="https://assets-cdn.github.com/favicon.ico" \
                 --color="good" --title="${REPONAME} updated" "\`${NAME}\` ${NOW} > ${NEW}"
