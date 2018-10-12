@@ -178,7 +178,6 @@ _release() {
 }
 
 _git_push() {
-    # version
     _gen_version
 
     _result "VERSION=${VERSION}"
