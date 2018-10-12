@@ -2,7 +2,7 @@
 
 SHELL_DIR=$(dirname $0)
 
-CMD=${1}
+CMD=${1:-${CIRCLE_JOB}}
 
 USERNAME=${CIRCLE_PROJECT_USERNAME:-opsnow-tools}
 REPONAME=${CIRCLE_PROJECT_REPONAME:-valve-builder}
