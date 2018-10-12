@@ -149,6 +149,9 @@ _release() {
     if [ -f ${SHELL_DIR}/target/VERSION ]; then
         exit 0
     fi
+    if [ ! -f ${SHELL_DIR}/versions/VERSION ]; then
+        exit 0
+    fi
 
     # version
     _gen_version
