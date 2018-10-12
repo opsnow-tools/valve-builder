@@ -36,9 +36,9 @@ workflows:
   apply:
     jobs:
       - build
-      - release:
-          requires:
-            - build
+      # - release:
+      #     requires:
+      #       - build
   nightly:
     jobs:
       - build

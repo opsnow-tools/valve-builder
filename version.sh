@@ -7,6 +7,9 @@ SHELL_DIR=$(dirname $0)
 USERNAME=${1:-opsnow-tools}
 REPONAME=${2:-valve-builder}
 
+GIT_USERNAME="bot"
+GIT_USEREMAIL="sbl@bespinglobal.com"
+
 _gen_version() {
     # previous versions
     VERSION=$(curl -s https://api.github.com/repos/${USERNAME}/${REPONAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
@@ -86,8 +89,8 @@ _check_version() {
 }
 
 if [ ! -z ${GITHUB_TOKEN} ]; then
-    git config --global user.name "bot"
-    git config --global user.email "sbl@bespinglobal.com"
+    git config --global user.name "${GIT_USERNAME}"
+    git config --global user.email "${GIT_USEREMAIL}"
 fi
 
 mkdir -p ${SHELL_DIR}/target
@@ -115,10 +118,14 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
         printf "%3s. %s\n" "${VAL}" "$(cat ${SHELL_DIR}/versions/${VAL} | xargs)" >> ${SHELL_DIR}/target/log
     done < ${LIST}
 
-    # git commit
+    echo "# git add --all"
     git add --all
+
+    # git commit
+    echo "# git commit -m $(cat ${SHELL_DIR}/target/log)"
     # git commit -m "updated at ${DATE}" > /dev/null 2>&1 || export CHANGED=true
-    git commit -m "$(cat ${SHELL_DIR}/target/log)" > /dev/null 2>&1 || export CHANGED=true
+    # git commit -m "$(cat ${SHELL_DIR}/target/log)" > /dev/null 2>&1 || export CHANGED=true
+    git commit -m "$(cat ${SHELL_DIR}/target/log)"
     echo
 
     if [ ! -z ${CHANGED} ]; then
