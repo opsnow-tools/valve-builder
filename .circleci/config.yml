@@ -12,14 +12,14 @@ jobs:
       - run:
           name: Package
           command: |
-            chmod 755 ./package.sh
-            ./package.sh
+            chmod 755 ./build.sh
+            ./build.sh package
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
             - target/*
             - versions/*
-            - release.sh
+            - build.sh
   release:
     docker:
       - image: circleci/golang
@@ -29,8 +29,8 @@ jobs:
       - run:
           name: Release
           command: |
-            chmod 755 ./workspace/release.sh
-            ./workspace/release.sh
+            chmod 755 ./workspace/build.sh
+            ./workspace/build.sh release
 
 workflows:
   version: 2

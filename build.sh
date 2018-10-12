@@ -2,8 +2,10 @@
 
 SHELL_DIR=$(dirname $0)
 
-USERNAME=${1:-opsnow-tools}
-REPONAME=${2:-valve-builder}
+CMD=${1}
+
+USERNAME=${CIRCLE_PROJECT_USERNAME:-opsnow-tools}
+REPONAME=${CIRCLE_PROJECT_REPONAME:-valve-builder}
 
 GIT_USERNAME="bot"
 GIT_USEREMAIL="sbl@bespinglobal.com"
@@ -43,6 +45,16 @@ _error() {
     exit 1
 }
 
+_prepare() {
+    if [ ! -z ${GITHUB_TOKEN} ]; then
+        git config --global user.name "${GIT_USERNAME}"
+        git config --global user.email "${GIT_USEREMAIL}"
+    fi
+
+    mkdir -p ${SHELL_DIR}/target
+    mkdir -p ${SHELL_DIR}/versions
+}
+
 _gen_version() {
     # previous versions
     VERSION=$(curl -s https://api.github.com/repos/${USERNAME}/${REPONAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
@@ -70,6 +82,7 @@ _gen_version() {
     fi
 
     printf "${VERSION}" > ${SHELL_DIR}/target/VERSION
+    printf "${VERSION}" > ${SHELL_DIR}/versions/VERSION
 
     _result "VERSION=${VERSION}"
 }
@@ -119,22 +132,48 @@ _check_version() {
     fi
 }
 
-if [ ! -z ${GITHUB_TOKEN} ]; then
-    git config --global user.name "${GIT_USERNAME}"
-    git config --global user.email "${GIT_USEREMAIL}"
-fi
+_package() {
+    _check_version "aws" "awscli" "aws-cli"
+    _check_version "kubernetes" "kubectl" "kubernetes"
+    _check_version "helm" "helm"
+    _check_version "Azure" "draft"
 
-mkdir -p ${SHELL_DIR}/target
-mkdir -p ${SHELL_DIR}/versions
+    rm -rf ${SHELL_DIR}/target/awscli-*
 
-_check_version "aws" "awscli" "aws-cli"
-_check_version "kubernetes" "kubectl" "kubernetes"
-_check_version "helm" "helm"
-_check_version "Azure" "draft"
+    if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
+        _git_push
+    fi
+}
 
-rm -rf ${SHELL_DIR}/target/awscli-*
+_release() {
+    if [ -f ${SHELL_DIR}/target/VERSION ]; then
+        exit 0
+    fi
 
-if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
+    # version
+    _gen_version
+
+    LATEST=$(cat ${SHELL_DIR}/versions/VERSION | xargs)
+
+    if [ "${VERSION}" == "${LATEST}" ]; then
+        exit 0
+    fi
+
+    _result "VERSION=${LATEST}"
+
+    _command "go get github.com/tcnksm/ghr"
+    go get github.com/tcnksm/ghr
+
+    _command "ghr ${SHELL_DIR}/versions/"
+    ghr -t ${GITHUB_TOKEN} \
+        -u ${USERNAME} \
+        -r ${REPONAME} \
+        -c ${CIRCLE_SHA1} \
+        -delete ${LATEST} \
+        ${SHELL_DIR}/versions/
+}
+
+_git_push() {
     # version
     _gen_version
 
@@ -156,4 +195,15 @@ if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
 
     _command "git push github.com/${USERNAME}/${REPONAME} master"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
-fi
+}
+
+case ${CMD} in
+    _prepare
+
+    package)
+        _package
+        ;;
+    release)
+        _release
+        ;;
+esac
