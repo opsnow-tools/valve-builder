@@ -200,9 +200,9 @@ _git_push() {
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
 }
 
-case ${CMD} in
-    _prepare
+_prepare
 
+case ${CMD} in
     package)
         _package
         ;;
