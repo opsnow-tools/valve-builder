@@ -85,8 +85,8 @@ _gen_version() {
     # add build version
     VERSION=$(echo ${VERSION} | perl -pe 's/^(([v\d]+\.)*)(\d+)(.*)$/$1.($3+1).$4/e')
 
-    printf "${VERSION}" > ${SHELL_DIR}/target/VERSION
-    printf "${VERSION}" > ${SHELL_DIR}/versions/VERSION
+    echo "${VERSION}" > ${SHELL_DIR}/target/VERSION
+    echo "${VERSION}" > ${SHELL_DIR}/versions/VERSION
 }
 
 _check_version() {
