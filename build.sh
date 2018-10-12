@@ -175,12 +175,12 @@ _git_push() {
 
     # commit log
     LIST=/tmp/versions
-    ls ${SHELL_DIR}/versions > ${LIST}
+    ls ${SHELL_DIR}/versions | sort > ${LIST}
 
     echo "${REPONAME} ${VERSION}" > ${SHELL_DIR}/target/log
 
     while read VAL; do
-        printf "%3s. %s\n" "${VAL}" "$(cat ${SHELL_DIR}/versions/${VAL} | xargs)" >> ${SHELL_DIR}/target/log
+        echo "${VAL} $(cat ${SHELL_DIR}/versions/${VAL} | xargs)" >> ${SHELL_DIR}/target/log
     done < ${LIST}
 
     _command "git add --all"
