@@ -12,12 +12,14 @@ jobs:
       - run:
           name: Check Versions
           command: |
-            ./version.sh ${CIRCLE_PROJECT_USERNAME} ${CIRCLE_PROJECT_REPONAME}
+            ./version.sh
+            # ./version.sh ${CIRCLE_PROJECT_USERNAME} ${CIRCLE_PROJECT_REPONAME}
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
             - target/*
             - versions/*
+            - release.sh
   release:
     docker:
       - image: circleci/golang
@@ -27,9 +29,10 @@ jobs:
       - run:
           name: Release
           command: |
-            go get github.com/tcnksm/ghr
-            VERSION=$(cat workspace/target/VERSION)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} workspace/versions/
+            ./release.sh
+            # go get github.com/tcnksm/ghr
+            # VERSION=$(cat workspace/target/VERSION)
+            # ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} workspace/versions/
 
 workflows:
   version: 2
