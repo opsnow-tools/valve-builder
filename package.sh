@@ -85,12 +85,12 @@ _check_version() {
     # NWO=$(cat ${SHELL_DIR}/Dockerfile | grep "ENV ${NAME}" | awk '{print $3}')
 
     if [ "${NAME}" == "awscli" ]; then
-        pushd target
+        pushd ${SHELL_DIR}/target
         curl -sLO https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
         unzip awscli-bundle.zip
         popd
 
-        NEW=$(ls target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
+        NEW=$(ls ${SHELL_DIR}/target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
     elif [ "${NAME}" == "kubectl" ]; then
         NEW=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt | xargs)
     else
@@ -131,6 +131,8 @@ _check_version "aws" "awscli" "aws-cli"
 _check_version "kubernetes" "kubectl" "kubernetes"
 _check_version "helm" "helm"
 _check_version "Azure" "draft"
+
+rm -rf ${SHELL_DIR}/target/awscli-bundle*
 
 if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
     # version

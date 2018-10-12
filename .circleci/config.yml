@@ -17,6 +17,7 @@ jobs:
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
+            - target/*
             - versions/*
             - release.sh
   release:
