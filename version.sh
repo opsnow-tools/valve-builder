@@ -12,7 +12,8 @@ GIT_USEREMAIL="sbl@bespinglobal.com"
 
 ################################################################################
 
-command -v tput > /dev/null || TPUT=false
+# command -v tput > /dev/null || TPUT=false
+TPUT=false
 
 _echo() {
     if [ -z ${TPUT} ] && [ ! -z $2 ]; then
@@ -71,6 +72,7 @@ _gen_version() {
     fi
 
     printf "${VERSION}" > ${SHELL_DIR}/target/VERSION
+
     _result "VERSION=${VERSION}"
 }
 
@@ -117,7 +119,6 @@ _check_version() {
                 --footer="${FOOTER}" --footer_icon="https://assets-cdn.github.com/favicon.ico" \
                 --color="good" --title="${REPONAME} updated" "\`${NAME}\` ${NOW} > ${NEW}"
             _result " slack ${NAME} ${NOW} > ${NEW} "
-            echo
         fi
     fi
 }
@@ -136,11 +137,8 @@ _check_version "helm" "helm"
 _check_version "Azure" "draft"
 
 if [ ! -z ${GITHUB_TOKEN} ]; then
-    echo
-
     # version
     _gen_version
-    echo
 
     # commit log
     LIST=/tmp/versions
@@ -160,13 +158,11 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     # git commit -m "updated at ${DATE}" > /dev/null 2>&1 || export CHANGED=true
     # git commit -m "$(cat ${SHELL_DIR}/target/log)" > /dev/null 2>&1 || export CHANGED=true
     git commit -m "$(cat ${SHELL_DIR}/target/log)"
-    echo
 
     if [ ! -z ${CHANGED} ]; then
         # git push
         _command "git push github.com/${USERNAME}/${REPONAME} master"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
-        echo
 
         # git tag
         _command "git tag ${VERSION}"
@@ -175,6 +171,5 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
         # git push
         _command "git push github.com/${USERNAME}/${REPONAME} ${VERSION}"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${VERSION}
-        echo
     fi
 fi
