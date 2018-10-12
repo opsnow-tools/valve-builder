@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DATE=$(date +%Y%m%d)
+
 SHELL_DIR=$(dirname $0)
 
 USERNAME=${1:-opsnow-tools}
@@ -63,6 +65,13 @@ _check_version() {
         NEW=$(curl -s https://api.github.com/repos/${REPO}/${NAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
     fi
 
+    # target log
+    if [ ! -f ${SHELL_DIR}/target/log ]; then
+        echo "updated at ${DATE}" > ${SHELL_DIR}/target/log
+    fi
+    printf '# %-10s %-10s\n' "${NAME}" "${NEW}" > ${SHELL_DIR}/target/log
+
+    # log
     printf '# %-10s %-10s %-10s\n' "${NAME}" "${NOW}" "${NEW}"
 
     if [ "${NOW}" != "${NEW}" ]; then
@@ -93,7 +102,6 @@ _check_version "Azure" "draft"
 
 if [ ! -z ${GITHUB_TOKEN} ]; then
     echo
-    DATE=$(date +%Y%m%d)
 
     # version
     _gen_version
@@ -102,6 +110,7 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     # git commit
     git add --all
     git commit -m "updated at ${DATE}" > /dev/null 2>&1 || export CHANGED=true
+    # git commit -m "$(cat ${SHELL_DIR}/target/log)" > /dev/null 2>&1 || export CHANGED=true
     echo
 
     if [ ! -z ${CHANGED} ]; then
