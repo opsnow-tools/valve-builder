@@ -103,7 +103,7 @@ _check_version() {
         NEW=$(curl -s https://api.github.com/repos/${REPO}/${NAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
     fi
 
-    printf '# %-10s %-10s %-10s\n' "${NAME}" "${NOW}" "${NEW}"
+    _result "$(printf '%-10s %-10s %-10s' "${NAME}" "${NOW}" "${NEW}")"
 
     if [ "${NOW}" != "${NEW}" ]; then
         echo "${NEW}" > ${SHELL_DIR}/versions/${NAME}
