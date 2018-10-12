@@ -132,7 +132,7 @@ _check_version "kubernetes" "kubectl" "kubernetes"
 _check_version "helm" "helm"
 _check_version "Azure" "draft"
 
-rm -rf ${SHELL_DIR}/target/awscli-bundle*
+rm -rf ${SHELL_DIR}/target/awscli-*
 
 if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
     # version
