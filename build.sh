@@ -55,7 +55,7 @@ _prepare() {
     mkdir -p ${SHELL_DIR}/versions
 }
 
-_gen_version() {
+_get_version() {
     # previous versions
     VERSION=$(curl -s https://api.github.com/repos/${USERNAME}/${REPONAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
 
@@ -63,28 +63,30 @@ _gen_version() {
         echo "v0.0.0" > ${SHELL_DIR}/VERSION
     fi
 
-    # release version
     if [ -z ${VERSION} ]; then
         VERSION=$(cat ${SHELL_DIR}/VERSION | xargs)
-    else
-        MAJOR=$(cat ${SHELL_DIR}/VERSION | xargs | cut -d'.' -f1)
-        MINOR=$(cat ${SHELL_DIR}/VERSION | xargs | cut -d'.' -f2)
-
-        LATEST_MAJOR=$(echo ${VERSION} | cut -d'.' -f1)
-        LATEST_MINOR=$(echo ${VERSION} | cut -d'.' -f2)
-
-        if [ "${MAJOR}" != "${LATEST_MAJOR}" ] || [ "${MINOR}" != "${LATEST_MINOR}" ]; then
-            VERSION=$(cat ${SHELL_DIR}/VERSION | xargs)
-        fi
-
-        # add build version
-        VERSION=$(echo ${VERSION} | perl -pe 's/^(([v\d]+\.)*)(\d+)(.*)$/$1.($3+1).$4/e')
     fi
+}
+
+_gen_version() {
+    _get_version
+
+    # release version
+    MAJOR=$(cat ${SHELL_DIR}/VERSION | xargs | cut -d'.' -f1)
+    MINOR=$(cat ${SHELL_DIR}/VERSION | xargs | cut -d'.' -f2)
+
+    LATEST_MAJOR=$(echo ${VERSION} | cut -d'.' -f1)
+    LATEST_MINOR=$(echo ${VERSION} | cut -d'.' -f2)
+
+    if [ "${MAJOR}" != "${LATEST_MAJOR}" ] || [ "${MINOR}" != "${LATEST_MINOR}" ]; then
+        VERSION=$(cat ${SHELL_DIR}/VERSION | xargs)
+    fi
+
+    # add build version
+    VERSION=$(echo ${VERSION} | perl -pe 's/^(([v\d]+\.)*)(\d+)(.*)$/$1.($3+1).$4/e')
 
     printf "${VERSION}" > ${SHELL_DIR}/target/VERSION
     printf "${VERSION}" > ${SHELL_DIR}/versions/VERSION
-
-    _result "VERSION=${VERSION}"
 }
 
 _check_version() {
@@ -153,25 +155,33 @@ _release() {
         exit 0
     fi
 
-    VERSION=$(cat ${SHELL_DIR}/versions/VERSION | xargs)
+    _get_version
 
-    _result "VERSION=${VERSION}"
+    LATEST=$(cat ${SHELL_DIR}/versions/VERSION | xargs)
+
+    if [ "${VERSION}" == "${LATEST}" ]; then
+        exit 0
+    fi
+
+    _result "VERSION=${LATEST}"
 
     _command "go get github.com/tcnksm/ghr"
     go get github.com/tcnksm/ghr
 
-    _command "ghr ${VERSION} ${SHELL_DIR}/versions/"
+    _command "ghr ${LATEST} ${SHELL_DIR}/versions/"
     ghr -t ${GITHUB_TOKEN} \
         -u ${USERNAME} \
         -r ${REPONAME} \
         -c ${CIRCLE_SHA1} \
         -delete \
-        ${VERSION} ${SHELL_DIR}/versions/
+        ${LATEST} ${SHELL_DIR}/versions/
 }
 
 _git_push() {
     # version
     _gen_version
+
+    _result "VERSION=${VERSION}"
 
     # commit log
     LIST=/tmp/versions
