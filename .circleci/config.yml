@@ -1,3 +1,6 @@
+#
+# CircleCI 2.0
+#
 version: 2
 jobs:
   package:
@@ -8,7 +11,8 @@ jobs:
       - checkout
       - run:
           name: Check Versions
-          command: ./version.sh $CIRCLE_PROJECT_USERNAME $CIRCLE_PROJECT_REPONAME
+          command: |
+            ./version.sh ${CIRCLE_PROJECT_USERNAME} ${CIRCLE_PROJECT_REPONAME}
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
@@ -33,13 +37,13 @@ workflows:
       - build
       - release:
           requires:
-            - package
+            - build
   nightly:
     jobs:
       - build
       - release:
           requires:
-            - package
+            - build
     triggers:
       - schedule:
           cron: "0 0 * * *"
