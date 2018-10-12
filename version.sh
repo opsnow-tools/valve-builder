@@ -7,7 +7,37 @@ REPONAME=${2:-valve-builder}
 
 CHANGED=
 
-check() {
+_gen_version() {
+    # previous versions
+    VERSION=$(curl -s https://api.github.com/repos/${USERNAME}/${REPONAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
+
+    if [ ! -f ./VERSION ]; then
+        echo "v0.0.0" > ./VERSION
+    fi
+
+    # release version
+    if [ -z ${VERSION} ]; then
+        VERSION=$(cat ./VERSION | xargs)
+    else
+        MAJOR=$(cat ./VERSION | xargs | cut -d'.' -f1)
+        MINOR=$(cat ./VERSION | xargs | cut -d'.' -f2)
+
+        LATEST_MAJOR=$(echo ${VERSION} | cut -d'.' -f1)
+        LATEST_MINOR=$(echo ${VERSION} | cut -d'.' -f2)
+
+        if [ "${MAJOR}" != "${LATEST_MAJOR}" ] || [ "${MINOR}" != "${LATEST_MINOR}" ]; then
+            VERSION=$(cat ./VERSION | xargs)
+        fi
+
+        # add build version
+        VERSION=$(echo ${VERSION} | perl -pe 's/^(([v\d]+\.)*)(\d+)(.*)$/$1.($3+1).$4/e')
+    fi
+
+    printf "${VERSION}" > target/VERSION
+    echo "VERSION=${VERSION}"
+}
+
+_check_version() {
     REPO=$1
     NAME=$2
 
@@ -60,28 +90,34 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     git config --global user.email "sbl@bespinglobal.com"
 fi
 
-check "aws" "awscli" "aws-cli"
-check "kubernetes" "kubectl" "kubernetes"
-check "helm" "helm"
-check "Azure" "draft"
+_check_version "aws" "awscli" "aws-cli"
+_check_version "kubernetes" "kubectl" "kubernetes"
+_check_version "helm" "helm"
+_check_version "Azure" "draft"
 
-if [ ! -z ${GITHUB_TOKEN} ]; then
+if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
     echo
     DATE=$(date +%Y%m%d)
 
+    # version
+    _gen_version
+    echo
+
+    # git commit
     git add --all
     git commit -m "updated at ${DATE}"
     echo
 
+    # git push
     echo "# git push github.com/${USERNAME}/${REPONAME} master"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
     echo
 
-    # if [ ! -z ${CHANGED} ]; then
-    #     git tag ${DATE}
+    # git tag
+    git tag ${VERSION}
 
-    #     echo "# git push github.com/${USERNAME}/${REPONAME} ${DATE}"
-    #     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${DATE}
-    #     echo
-    # fi
+    # git push
+    echo "# git push github.com/${USERNAME}/${REPONAME} ${VERSION}"
+    git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${VERSION}
+    echo
 fi
