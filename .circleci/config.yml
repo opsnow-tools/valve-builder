@@ -12,6 +12,7 @@ jobs:
       - run:
           name: Package
           command: |
+            chmod 755 ./package.sh
             ./package.sh
       - persist_to_workspace:
           root: /tmp/workspace
@@ -27,8 +28,7 @@ jobs:
       - run:
           name: Release
           command: |
-            pwd
-            ls -al
+            chmod 755 ./workspace/release.sh
             ./workspace/release.sh
 
 workflows:
