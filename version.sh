@@ -100,6 +100,8 @@ _check_version() {
     _result "$(printf '%-10s %-10s %-10s' "${NAME}" "${NOW}" "${NEW}")"
 
     if [ "${NOW}" != "${NEW}" ]; then
+        CHANGED=true
+
         echo "${NEW}" > ${SHELL_DIR}/versions/${NAME}
 
         # replace version
@@ -130,7 +132,7 @@ _check_version "kubernetes" "kubectl" "kubernetes"
 _check_version "helm" "helm"
 _check_version "Azure" "draft"
 
-if [ ! -z ${GITHUB_TOKEN} ]; then
+if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
     # version
     _gen_version
 
@@ -148,16 +150,14 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     git add --all
 
     _command "git commit -m $(cat ${SHELL_DIR}/target/log)"
-    git commit -m "$(cat ${SHELL_DIR}/target/log)" > /dev/null 2>&1 || export CHANGED=true
+    git commit -m "$(cat ${SHELL_DIR}/target/log)"
 
-    if [ ! -z ${CHANGED} ]; then
-        _command "git push github.com/${USERNAME}/${REPONAME} master"
-        git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
+    _command "git push github.com/${USERNAME}/${REPONAME} master"
+    git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
 
-        _command "git tag ${VERSION}"
-        git tag ${VERSION}
+    _command "git tag ${VERSION}"
+    git tag ${VERSION}
 
-        _command "git push github.com/${USERNAME}/${REPONAME} ${VERSION}"
-        git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${VERSION}
-    fi
+    _command "git push github.com/${USERNAME}/${REPONAME} ${VERSION}"
+    git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${VERSION}
 fi
