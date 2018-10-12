@@ -5,8 +5,6 @@ SHELL_DIR=$(dirname $0)
 USERNAME=${1:-opsnow-tools}
 REPONAME=${2:-valve-builder}
 
-CHANGED=
-
 _gen_version() {
     # previous versions
     VERSION=$(curl -s https://api.github.com/repos/${USERNAME}/${REPONAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
@@ -68,8 +66,6 @@ _check_version() {
     printf '# %-10s %-10s %-10s\n' "${NAME}" "${NOW}" "${NEW}"
 
     if [ "${NOW}" != "${NEW}" ]; then
-        CHANGED=true
-
         echo "${NEW}" > ${SHELL_DIR}/versions/${NAME}
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
 
@@ -95,7 +91,7 @@ _check_version "kubernetes" "kubectl" "kubernetes"
 _check_version "helm" "helm"
 _check_version "Azure" "draft"
 
-if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
+if [ ! -z ${GITHUB_TOKEN} ]; then
     echo
     DATE=$(date +%Y%m%d)
 
@@ -105,19 +101,21 @@ if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
 
     # git commit
     git add --all
-    git commit -m "updated at ${DATE}"
+    git commit -m "updated at ${DATE}" > /dev/null 2>&1 || export CHANGED=true
     echo
 
-    # git push
-    echo "# git push github.com/${USERNAME}/${REPONAME} master"
-    git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
-    echo
+    if [ ! -z ${CHANGED} ]; then
+        # git push
+        echo "# git push github.com/${USERNAME}/${REPONAME} master"
+        git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
+        echo
 
-    # git tag
-    git tag ${VERSION}
+        # git tag
+        git tag ${VERSION}
 
-    # git push
-    echo "# git push github.com/${USERNAME}/${REPONAME} ${VERSION}"
-    git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${VERSION}
-    echo
+        # git push
+        echo "# git push github.com/${USERNAME}/${REPONAME} ${VERSION}"
+        git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${VERSION}
+        echo
+    fi
 fi
