@@ -10,6 +10,40 @@ REPONAME=${2:-valve-builder}
 GIT_USERNAME="bot"
 GIT_USEREMAIL="sbl@bespinglobal.com"
 
+################################################################################
+
+command -v tput > /dev/null || TPUT=false
+
+_echo() {
+    if [ -z ${TPUT} ] && [ ! -z $2 ]; then
+        echo -e "$(tput setaf $2)$1$(tput sgr0)"
+    else
+        echo -e "$1"
+    fi
+}
+
+_result() {
+    echo
+    _echo "# $@" 4
+}
+
+_command() {
+    echo
+    _echo "$ $@" 3
+}
+
+_success() {
+    echo
+    _echo "+ $@" 2
+    exit 0
+}
+
+_error() {
+    echo
+    _echo "- $@" 1
+    exit 1
+}
+
 _gen_version() {
     # previous versions
     VERSION=$(curl -s https://api.github.com/repos/${USERNAME}/${REPONAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
@@ -37,7 +71,7 @@ _gen_version() {
     fi
 
     printf "${VERSION}" > ${SHELL_DIR}/target/VERSION
-    echo "VERSION=${VERSION}"
+    _result "VERSION=${VERSION}"
 }
 
 _check_version() {
@@ -82,7 +116,7 @@ _check_version() {
                 --emoji=":construction_worker:" --username="valve" \
                 --footer="${FOOTER}" --footer_icon="https://assets-cdn.github.com/favicon.ico" \
                 --color="good" --title="${REPONAME} updated" "\`${NAME}\` ${NOW} > ${NEW}"
-            echo " slack ${NAME} ${NOW} > ${NEW} "
+            _result " slack ${NAME} ${NOW} > ${NEW} "
             echo
         fi
     fi
@@ -118,11 +152,11 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
         printf "%3s. %s\n" "${VAL}" "$(cat ${SHELL_DIR}/versions/${VAL} | xargs)" >> ${SHELL_DIR}/target/log
     done < ${LIST}
 
-    echo "# git add --all"
+    _command "git add --all"
     git add --all
 
     # git commit
-    echo "# git commit -m $(cat ${SHELL_DIR}/target/log)"
+    _command "git commit -m $(cat ${SHELL_DIR}/target/log)"
     # git commit -m "updated at ${DATE}" > /dev/null 2>&1 || export CHANGED=true
     # git commit -m "$(cat ${SHELL_DIR}/target/log)" > /dev/null 2>&1 || export CHANGED=true
     git commit -m "$(cat ${SHELL_DIR}/target/log)"
@@ -130,15 +164,16 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
 
     if [ ! -z ${CHANGED} ]; then
         # git push
-        echo "# git push github.com/${USERNAME}/${REPONAME} master"
+        _command "git push github.com/${USERNAME}/${REPONAME} master"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
         echo
 
         # git tag
+        _command "git tag ${VERSION}"
         git tag ${VERSION}
 
         # git push
-        echo "# git push github.com/${USERNAME}/${REPONAME} ${VERSION}"
+        _command "git push github.com/${USERNAME}/${REPONAME} ${VERSION}"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${VERSION}
         echo
     fi
