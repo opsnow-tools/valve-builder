@@ -153,27 +153,20 @@ _release() {
         exit 0
     fi
 
-    # version
-    _gen_version
+    VERSION=$(cat ${SHELL_DIR}/versions/VERSION | xargs)
 
-    LATEST=$(cat ${SHELL_DIR}/versions/VERSION | xargs)
-
-    if [ "${VERSION}" == "${LATEST}" ]; then
-        exit 0
-    fi
-
-    _result "VERSION=${LATEST}"
+    _result "VERSION=${VERSION}"
 
     _command "go get github.com/tcnksm/ghr"
     go get github.com/tcnksm/ghr
 
-    _command "ghr ${SHELL_DIR}/versions/"
+    _command "ghr ${VERSION} ${SHELL_DIR}/versions/"
     ghr -t ${GITHUB_TOKEN} \
         -u ${USERNAME} \
         -r ${REPONAME} \
         -c ${CIRCLE_SHA1} \
-        -delete ${LATEST} \
-        ${SHELL_DIR}/versions/
+        -delete \
+        ${VERSION} ${SHELL_DIR}/versions/
 }
 
 _git_push() {
