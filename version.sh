@@ -38,15 +38,14 @@ _gen_version() {
 }
 
 _check_version() {
-    REPO=$1
-    NAME=$2
+    REPO=${1}
+    NAME=${2}
+    G_NM=${3:-${NAME}}
 
-    GIT_NAME="${3:-${NAME}}"
-
-    mkdir -p ${SHELL_DIR}/versions
     touch ${SHELL_DIR}/versions/${NAME}
-
     NOW=$(cat ${SHELL_DIR}/versions/${NAME} | xargs)
+
+    # NWO=$(cat ${SHELL_DIR}/Dockerfile | grep "ENV ${NAME}" | awk '{print $3}')
 
     if [ "${NAME}" == "awscli" ]; then
         rm -rf target
@@ -65,21 +64,17 @@ _check_version() {
         NEW=$(curl -s https://api.github.com/repos/${REPO}/${NAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
     fi
 
-    # target log
-    if [ ! -f ${SHELL_DIR}/target/log ]; then
-        echo "updated at ${DATE}" > ${SHELL_DIR}/target/log
-    fi
-    printf '# %-10s %-10s\n' "${NAME}" "${NEW}" > ${SHELL_DIR}/target/log
-
-    # log
     printf '# %-10s %-10s %-10s\n' "${NAME}" "${NOW}" "${NEW}"
 
     if [ "${NOW}" != "${NEW}" ]; then
         echo "${NEW}" > ${SHELL_DIR}/versions/${NAME}
+
+        # replace version
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
 
+        # slack
         if [ ! -z ${SLACK_TOKEN} ]; then
-            FOOTER="<https://github.com/${REPO}/${GIT_NAME}|${REPO}/${GIT_NAME}>"
+            FOOTER="<https://github.com/${REPO}/${G_NM}|${REPO}/${G_NM}>"
             ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" --channel="tools" \
                 --emoji=":construction_worker:" --username="valve" \
                 --footer="${FOOTER}" --footer_icon="https://assets-cdn.github.com/favicon.ico" \
@@ -95,6 +90,9 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     git config --global user.email "sbl@bespinglobal.com"
 fi
 
+mkdir -p ${SHELL_DIR}/target
+mkdir -p ${SHELL_DIR}/versions
+
 _check_version "aws" "awscli" "aws-cli"
 _check_version "kubernetes" "kubectl" "kubernetes"
 _check_version "helm" "helm"
@@ -107,10 +105,20 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     _gen_version
     echo
 
+    # commit log
+    LIST=/tmp/versions
+    ls ${SHELL_DIR}/versions > ${LIST}
+
+    echo "${VERSION} at ${DATE}" > ${SHELL_DIR}/target/log
+
+    while read VAL; do
+        printf "%3s. %s\n" "${VAL}" "$(cat ${SHELL_DIR}/versions/${VAL} | xargs)" >> ${SHELL_DIR}/target/log
+    done < ${LIST}
+
     # git commit
     git add --all
-    git commit -m "updated at ${DATE}" > /dev/null 2>&1 || export CHANGED=true
-    # git commit -m "$(cat ${SHELL_DIR}/target/log)" > /dev/null 2>&1 || export CHANGED=true
+    # git commit -m "updated at ${DATE}" > /dev/null 2>&1 || export CHANGED=true
+    git commit -m "$(cat ${SHELL_DIR}/target/log)" > /dev/null 2>&1 || export CHANGED=true
     echo
 
     if [ ! -z ${CHANGED} ]; then
