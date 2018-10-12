@@ -154,10 +154,4 @@ if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
 
     _command "git push github.com/${USERNAME}/${REPONAME} master"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
-
-    _command "git tag ${VERSION}"
-    git tag ${VERSION}
-
-    _command "git push github.com/${USERNAME}/${REPONAME} ${VERSION}"
-    git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${VERSION}
 fi
