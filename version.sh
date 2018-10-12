@@ -1,7 +1,5 @@
 #!/bin/bash
 
-DATE=$(date +%Y%m%d)
-
 SHELL_DIR=$(dirname $0)
 
 USERNAME=${1:-opsnow-tools}
@@ -87,14 +85,10 @@ _check_version() {
     # NWO=$(cat ${SHELL_DIR}/Dockerfile | grep "ENV ${NAME}" | awk '{print $3}')
 
     if [ "${NAME}" == "awscli" ]; then
-        rm -rf target
-        mkdir -p target
-
         pushd target
         curl -sLO https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
         unzip awscli-bundle.zip
         popd
-        echo
 
         NEW=$(ls target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
     elif [ "${NAME}" == "kubectl" ]; then
@@ -144,7 +138,7 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     LIST=/tmp/versions
     ls ${SHELL_DIR}/versions > ${LIST}
 
-    echo "${VERSION} at ${DATE}" > ${SHELL_DIR}/target/log
+    echo "${REPONAME} ${VERSION}" > ${SHELL_DIR}/target/log
 
     while read VAL; do
         printf "%3s. %s\n" "${VAL}" "$(cat ${SHELL_DIR}/versions/${VAL} | xargs)" >> ${SHELL_DIR}/target/log
@@ -153,22 +147,16 @@ if [ ! -z ${GITHUB_TOKEN} ]; then
     _command "git add --all"
     git add --all
 
-    # git commit
     _command "git commit -m $(cat ${SHELL_DIR}/target/log)"
-    # git commit -m "updated at ${DATE}" > /dev/null 2>&1 || export CHANGED=true
-    # git commit -m "$(cat ${SHELL_DIR}/target/log)" > /dev/null 2>&1 || export CHANGED=true
-    git commit -m "$(cat ${SHELL_DIR}/target/log)"
+    git commit -m "$(cat ${SHELL_DIR}/target/log)" > /dev/null 2>&1 || export CHANGED=true
 
     if [ ! -z ${CHANGED} ]; then
-        # git push
         _command "git push github.com/${USERNAME}/${REPONAME} master"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
 
-        # git tag
         _command "git tag ${VERSION}"
         git tag ${VERSION}
 
-        # git push
         _command "git push github.com/${USERNAME}/${REPONAME} ${VERSION}"
         git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${VERSION}
     fi
