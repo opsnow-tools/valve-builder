@@ -4,7 +4,7 @@ FROM docker
 
 RUN apk add -v --update python py-pip bash curl git jq openssh perl
 
-ENV awscli 1.16.54
+ENV awscli 1.16.55
 ENV kubectl v1.12.2
 ENV helm v2.11.0
 ENV draft v0.16.0
