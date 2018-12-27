@@ -2,7 +2,7 @@
 
 FROM docker
 
-RUN apk add -v --update python py-pip bash curl git jq openssh perl telnet
+RUN apk add -v --update python py-pip bash curl git jq openssh perl busybox-extras
 
 ENV awscli 1.16.81
 ENV kubectl v1.13.1
