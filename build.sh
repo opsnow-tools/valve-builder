@@ -135,14 +135,14 @@ _check_version() {
 }
 
 _package() {
-    _check_version "aws" "awscli" "aws-cli"
     _check_version "kubernetes" "kubectl" "kubernetes"
     _check_version "helm" "helm"
     _check_version "Azure" "draft"
 
-    rm -rf ${SHELL_DIR}/target/awscli-*
-
     if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
+        _check_version "aws" "awscli" "aws-cli"
+        rm -rf ${SHELL_DIR}/target/awscli-*
+
         _git_push
     fi
 }
