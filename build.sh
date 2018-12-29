@@ -114,7 +114,7 @@ _check_version() {
 
     _result "$(printf '%-10s %-10s %-10s' "${NAME}" "${NOW}" "${NEW}")"
 
-    if [ "${NOW}" != "${NEW}" ]; then
+    if [ "${NEW}" != "" ] && [ "${NEW}" != "${NOW}" ]; then
         CHANGED=true
 
         echo "${NEW}" > ${SHELL_DIR}/versions/${NAME}
