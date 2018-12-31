@@ -48,13 +48,12 @@ _error() {
 }
 
 _prepare() {
-    if [ ! -z ${GITHUB_TOKEN} ]; then
-        git config --global user.name "${GIT_USERNAME}"
-        git config --global user.email "${GIT_USEREMAIL}"
-    fi
-
+    # target
     mkdir -p ${SHELL_DIR}/target
     mkdir -p ${SHELL_DIR}/versions
+
+    # 755
+    find ./** | grep [.]sh | xargs chmod 755
 }
 
 _get_version() {
@@ -173,6 +172,9 @@ _git_push() {
     while read VAL; do
         echo "${VAL} $(cat ${SHELL_DIR}/versions/${VAL} | xargs)" >> ${SHELL_DIR}/target/log
     done < ${LIST}
+
+    git config --global user.name "${GIT_USERNAME}"
+    git config --global user.email "${GIT_USEREMAIL}"
 
     _command "git add --all"
     git add --all
