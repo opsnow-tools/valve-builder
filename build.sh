@@ -212,7 +212,7 @@ _package() {
 
 _publish() {
     if [ ! -f ${SHELL_DIR}/target/VERSION ]; then
-        _error
+        return
     fi
     if [ -f ${SHELL_DIR}/target/PRE ]; then
         return
@@ -225,7 +225,7 @@ _publish() {
 
 _release() {
     if [ ! -f ${SHELL_DIR}/target/VERSION ]; then
-        _error
+        return
     fi
     if [ -f ${SHELL_DIR}/target/PRE ]; then
         GHR_PARAM="-delete -prerelease"
