@@ -49,7 +49,7 @@ _error() {
 
 _prepare() {
     # target
-    mkdir -p ${SHELL_DIR}/target
+    mkdir -p ${SHELL_DIR}/target/dist
     mkdir -p ${SHELL_DIR}/versions
 
     # 755
@@ -141,7 +141,8 @@ _check_version() {
     if [ "${NEW}" != "" ] && [ "${NEW}" != "${NOW}" ]; then
         CHANGED=true
 
-        echo "${NEW}" > ${SHELL_DIR}/versions/${NAME}
+        printf "${NEW}" > ${SHELL_DIR}/versions/${NAME}
+        printf "${NEW}" > ${SHELL_DIR}/target/dist/${NAME}
 
         # replace version
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
@@ -242,13 +243,13 @@ _release() {
     _command "go get github.com/tcnksm/ghr"
     go get github.com/tcnksm/ghr
 
-    _command "ghr ${VERSION} ${SHELL_DIR}/versions/"
+    _command "ghr ${VERSION} ${SHELL_DIR}/target/dist/"
     ghr -t ${GITHUB_TOKEN:-EMPTY} \
         -u ${USERNAME} \
         -r ${REPONAME} \
         -c ${CIRCLE_SHA1} \
         ${GHR_PARAM} \
-        ${VERSION} ${SHELL_DIR}/versions/
+        ${VERSION} ${SHELL_DIR}/target/dist/
 }
 
 _prepare
