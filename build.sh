@@ -160,10 +160,6 @@ _check_version() {
 }
 
 _git_push() {
-    _gen_version
-
-    _result "VERSION=${VERSION}"
-
     # commit log
     LIST=/tmp/versions
     ls ${SHELL_DIR}/versions | sort > ${LIST}
@@ -200,6 +196,10 @@ _cf_reset() {
 }
 
 _package() {
+    _gen_version
+
+    _result "VERSION=${VERSION}"
+
     _check_version "kubernetes" "kubectl" "kubernetes"
     _check_version "helm" "helm"
     _check_version "Azure" "draft"
@@ -257,6 +257,9 @@ _prepare
 case ${CMD} in
     package)
         _package
+        ;;
+    publish)
+        _publish
         ;;
     release)
         _release
