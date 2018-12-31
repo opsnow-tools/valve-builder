@@ -7,6 +7,8 @@ CMD=${1:-${CIRCLE_JOB}}
 USERNAME=${CIRCLE_PROJECT_USERNAME:-opsnow-tools}
 REPONAME=${CIRCLE_PROJECT_REPONAME:-valve-builder}
 
+BUCKET="repo.opsnow.io"
+
 GIT_USERNAME="bot"
 GIT_USEREMAIL="sbl@bespinglobal.com"
 
@@ -46,21 +48,24 @@ _error() {
 }
 
 _prepare() {
-    if [ ! -z ${GITHUB_TOKEN} ]; then
-        git config --global user.name "${GIT_USERNAME}"
-        git config --global user.email "${GIT_USEREMAIL}"
-    fi
-
-    mkdir -p ${SHELL_DIR}/target
+    # target
+    mkdir -p ${SHELL_DIR}/target/dist
     mkdir -p ${SHELL_DIR}/versions
+
+    # 755
+    find ./** | grep [.]sh | xargs chmod 755
 }
 
 _get_version() {
-    # previous versions
+    # latest versions
     VERSION=$(curl -s https://api.github.com/repos/${USERNAME}/${REPONAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
 
+    if [ -z ${VERSION} ]; then
+        VERSION=$(curl -sL ${BUCKET}/${REPONAME}/VERSION | xargs)
+    fi
+
     if [ ! -f ${SHELL_DIR}/VERSION ]; then
-        echo "v0.0.0" > ${SHELL_DIR}/VERSION
+        printf "v0.0.0" > ${SHELL_DIR}/VERSION
     fi
 
     if [ -z ${VERSION} ]; then
@@ -82,11 +87,28 @@ _gen_version() {
         VERSION=$(cat ${SHELL_DIR}/VERSION | xargs)
     fi
 
-    # add build version
-    VERSION=$(echo ${VERSION} | perl -pe 's/^(([v\d]+\.)*)(\d+)(.*)$/$1.($3+1).$4/e')
+    _result "CIRCLE_BRANCH=${CIRCLE_BRANCH}"
+    _result "PR_NUM=${PR_NUM}"
+    _result "PR_URL=${PR_URL}"
 
-    echo "${VERSION}" > ${SHELL_DIR}/target/VERSION
-    echo "${VERSION}" > ${SHELL_DIR}/versions/VERSION
+    # version
+    if [ "${CIRCLE_BRANCH}" == "master" ]; then
+        VERSION=$(echo ${VERSION} | perl -pe 's/^(([v\d]+\.)*)(\d+)(.*)$/$1.($3+1).$4/e')
+        printf "${VERSION}" > ${SHELL_DIR}/target/VERSION
+    else
+        if [ "${PR_NUM}" == "" ]; then
+            if [ "${PR_URL}" != "" ]; then
+                PR_NUM=$(echo $PR_URL | cut -d'/' -f7)
+            else
+                PR_NUM=${CIRCLE_BUILD_NUM}
+            fi
+        fi
+
+        printf "${PR_NUM}" > ${SHELL_DIR}/target/PRE
+
+        VERSION="${VERSION}-${PR_NUM}"
+        printf "${VERSION}" > ${SHELL_DIR}/target/VERSION
+    fi
 }
 
 _check_version() {
@@ -106,6 +128,8 @@ _check_version() {
         popd
 
         NEW=$(ls ${SHELL_DIR}/target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
+
+        rm -rf ${SHELL_DIR}/target/awscli-*
     elif [ "${NAME}" == "kubectl" ]; then
         NEW=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt | xargs)
     else
@@ -117,7 +141,8 @@ _check_version() {
     if [ "${NEW}" != "" ] && [ "${NEW}" != "${NOW}" ]; then
         CHANGED=true
 
-        echo "${NEW}" > ${SHELL_DIR}/versions/${NAME}
+        printf "${NEW}" > ${SHELL_DIR}/versions/${NAME}
+        printf "${NEW}" > ${SHELL_DIR}/target/dist/${NAME}
 
         # replace version
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
@@ -132,49 +157,6 @@ _check_version() {
             _result " slack ${NAME} ${NOW} > ${NEW} "
         fi
     fi
-}
-
-_package() {
-    _check_version "kubernetes" "kubectl" "kubernetes"
-    _check_version "helm" "helm"
-    _check_version "Azure" "draft"
-
-    if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
-        _check_version "aws" "awscli" "aws-cli"
-        rm -rf ${SHELL_DIR}/target/awscli-*
-
-        _git_push
-    fi
-}
-
-_release() {
-    if [ -f ${SHELL_DIR}/target/VERSION ]; then
-        exit 0
-    fi
-    if [ ! -f ${SHELL_DIR}/versions/VERSION ]; then
-        exit 0
-    fi
-
-    _get_version
-
-    LATEST=$(cat ${SHELL_DIR}/versions/VERSION | xargs)
-
-    if [ "${VERSION}" == "${LATEST}" ]; then
-        exit 0
-    fi
-
-    _result "VERSION=${LATEST}"
-
-    _command "go get github.com/tcnksm/ghr"
-    go get github.com/tcnksm/ghr
-
-    _command "ghr ${LATEST} ${SHELL_DIR}/versions/"
-    ghr -t ${GITHUB_TOKEN} \
-        -u ${USERNAME} \
-        -r ${REPONAME} \
-        -c ${CIRCLE_SHA1} \
-        -delete \
-        ${LATEST} ${SHELL_DIR}/versions/
 }
 
 _git_push() {
@@ -192,6 +174,9 @@ _git_push() {
         echo "${VAL} $(cat ${SHELL_DIR}/versions/${VAL} | xargs)" >> ${SHELL_DIR}/target/log
     done < ${LIST}
 
+    git config --global user.name "${GIT_USERNAME}"
+    git config --global user.email "${GIT_USEREMAIL}"
+
     _command "git add --all"
     git add --all
 
@@ -200,6 +185,71 @@ _git_push() {
 
     _command "git push github.com/${USERNAME}/${REPONAME} master"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git master
+}
+
+_s3_sync() {
+    _command "aws s3 sync ${1} s3://${2}/ --acl public-read"
+    aws s3 sync ${1} s3://${2}/ --acl public-read
+}
+
+_cf_reset() {
+    CFID=$(aws cloudfront list-distributions --query "DistributionList.Items[].{Id:Id, DomainName: DomainName, OriginDomainName: Origins.Items[0].DomainName}[?contains(OriginDomainName, '${1}')] | [0]" | jq -r '.Id')
+    if [ "${CFID}" != "" ]; then
+        aws cloudfront create-invalidation --distribution-id ${CFID} --paths "/*"
+    fi
+}
+
+_package() {
+    _check_version "kubernetes" "kubectl" "kubernetes"
+    _check_version "helm" "helm"
+    _check_version "Azure" "draft"
+
+    if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
+        _check_version "aws" "awscli" "aws-cli"
+
+        _git_push
+    else
+        rm -rf ${SHELL_DIR}/target
+    fi
+}
+
+_publish() {
+    if [ ! -f ${SHELL_DIR}/target/VERSION ]; then
+        return
+    fi
+    if [ -f ${SHELL_DIR}/target/PRE ]; then
+        return
+    fi
+
+    _s3_sync "${SHELL_DIR}/target/" "${BUCKET}/${REPONAME}"
+
+    _cf_reset "${BUCKET}"
+}
+
+_release() {
+    if [ ! -f ${SHELL_DIR}/target/VERSION ]; then
+        return
+    fi
+    if [ -f ${SHELL_DIR}/target/PRE ]; then
+        GHR_PARAM="-delete -prerelease"
+    else
+        GHR_PARAM="-delete"
+    fi
+
+    VERSION=$(cat ${SHELL_DIR}/target/VERSION | xargs)
+
+    _result "VERSION=${VERSION}"
+
+    _command "go get github.com/tcnksm/ghr"
+    go get github.com/tcnksm/ghr
+
+    _command "ghr ${VERSION} ${SHELL_DIR}/target/dist/"
+    ghr -t ${GITHUB_TOKEN:-EMPTY} \
+        -u ${USERNAME} \
+        -r ${REPONAME} \
+        -c ${CIRCLE_SHA1} \
+        ${GHR_PARAM} \
+        ${VERSION} ${SHELL_DIR}/target/dist/
 }
 
 _prepare
