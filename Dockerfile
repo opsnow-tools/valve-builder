@@ -4,8 +4,8 @@ FROM docker
 
 RUN apk add -v --update python py-pip bash curl git jq openssh perl busybox-extras
 
-ENV awscli 1.16.81
-ENV kubectl v1.13.1
+ENV awscli 1.16.88
+ENV kubectl v1.13.2
 ENV helm v2.12.1
 ENV draft v0.16.0
 
