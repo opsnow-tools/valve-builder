@@ -14,7 +14,7 @@ GIT_USEREMAIL="sbl@bespinglobal.com"
 
 ################################################################################
 
-# command -v tput > /dev/null || TPUT=true
+# command -v tput > /dev/null && TPUT=true
 TPUT=
 
 _echo() {
