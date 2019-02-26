@@ -201,7 +201,6 @@ _package() {
     _result "VERSION=${VERSION}"
 
     _check_version "kubernetes" "kubectl" "kubernetes"
-    _check_version "kubernetes-sigs" "aws-iam-authenticator"
     _check_version "helm" "helm"
     _check_version "Azure" "draft"
 
