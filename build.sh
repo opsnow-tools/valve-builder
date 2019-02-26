@@ -58,7 +58,7 @@ _prepare() {
 
 _get_version() {
     # latest versions
-    VERSION=$(curl -s https://api.github.com/repos/${USERNAME}/${REPONAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
+    VERSION=$(curl -s https://api.github.com/repos/${USERNAME}/${REPONAME}/releases/latest | grep tag_name | cut -d'"' -f4)
 
     if [ -z ${VERSION} ]; then
         VERSION=$(curl -sL ${BUCKET}/${REPONAME}/VERSION | xargs)
@@ -133,7 +133,7 @@ _check_version() {
     elif [ "${NAME}" == "kubectl" ]; then
         NEW=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt | xargs)
     else
-        NEW=$(curl -s https://api.github.com/repos/${REPO}/${NAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
+        NEW=$(curl -s https://api.github.com/repos/${REPO}/${NAME}/releases/latest | grep tag_name | cut -d'"' -f4)
     fi
 
     _result "$(printf '%-10s %-10s %-10s' "${NAME}" "${NOW}" "${NEW}")"
@@ -145,7 +145,12 @@ _check_version() {
         printf "${NEW}" > ${SHELL_DIR}/target/dist/${NAME}
 
         # replace version
-        sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
+        if [ "${NAME}" == "aws-iam-authenticator" ]; then
+            VER=$(echo "${NEW}" | cut -d'v' -f2)
+            sed -i -e "s/ENV awsauth .*/ENV awsauth ${VER}/g" ${SHELL_DIR}/Dockerfile
+        else
+            sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
+        fi
 
         # slack
         if [ ! -z ${SLACK_TOKEN} ]; then
@@ -201,6 +206,7 @@ _package() {
     _result "VERSION=${VERSION}"
 
     _check_version "kubernetes" "kubectl" "kubernetes"
+    _check_version "kubernetes-sigs" "aws-iam-authenticator"
     _check_version "helm" "helm"
     _check_version "Azure" "draft"
 
