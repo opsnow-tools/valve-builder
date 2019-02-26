@@ -10,7 +10,7 @@ REPONAME=${CIRCLE_PROJECT_REPONAME:-valve-builder}
 BUCKET="repo.opsnow.io"
 
 GIT_USERNAME="bot"
-GIT_USEREMAIL="sbl@bespinglobal.com"
+GIT_USEREMAIL="sre@bespinglobal.com"
 
 ################################################################################
 
@@ -201,6 +201,7 @@ _package() {
     _result "VERSION=${VERSION}"
 
     _check_version "kubernetes" "kubectl" "kubernetes"
+    _check_version "kubernetes-sigs" "aws-iam-authenticator"
     _check_version "helm" "helm"
     _check_version "Azure" "draft"
 
