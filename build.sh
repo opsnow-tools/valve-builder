@@ -10,7 +10,7 @@ REPONAME=${CIRCLE_PROJECT_REPONAME:-valve-builder}
 BUCKET="repo.opsnow.io"
 
 GIT_USERNAME="bot"
-GIT_USEREMAIL="sbl@bespinglobal.com"
+GIT_USEREMAIL="sre@bespinglobal.com"
 
 ################################################################################
 
