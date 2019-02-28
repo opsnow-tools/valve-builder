@@ -5,3 +5,10 @@
 ```bash
 docker pull quay.io/opsnow-tools/valve-builder
 ```
+
+## installed tools
+
+* kubectl
+* helm
+* draft
+* aws-iam-authenticator
