@@ -125,8 +125,10 @@ _check_version() {
         return
     fi
 
-    if [ "${TRIM}" != "" ]; then
-        NEW=$(echo "${NEW}" | cut -d'v' -f2)
+    if [ "${TRIM}" == "" ]; then
+        CURR="${NEW}"
+    else
+        CURR=$(echo "${NEW}" | cut -d'v' -f2)
     fi
 
     _result "$(printf '%-25s %-25s %-25s' "${NAME}" "${NOW}" "${NEW}")"
@@ -138,23 +140,27 @@ _check_version() {
         printf "${NEW}" > ${SHELL_DIR}/target/dist/${NAME}
 
         # replace
-        sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
+        sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${CURR}/g" ${SHELL_DIR}/Dockerfile
 
         # slack
-        _slack
+        _slack "${NAME}" "${REPO}" "${NEW}"
     fi
 }
 
 _slack() {
+    NAME=${1}
+    REPO=${2}
+    CURR=${3}
+
     if [ ! -z ${SLACK_TOKEN} ]; then
         TITLE="${NAME} updated"
 
-        FOOTER="<https://github.com/${REPO}/releases/tag/${NEW}|${REPO}>"
+        FOOTER="<https://github.com/${REPO}/releases/tag/${CURR}|${REPO}>"
 
-        curl -sL repo.opsnow.io/valve-ctl/slack | bash -s -- \
+        curl -sL opspresso.com/tools/slack | bash -s -- \
             --token="${SLACK_TOKEN}" --emoji=":construction_worker:" --username="${USERNAME}" \
-            --footer="${FOOTER}" --footer_icon="https://repo.opsnow.io/img/github.png" \
-            --color="good" --title="${TITLE}" "\`${NEW}\`"
+            --footer="${FOOTER}" --footer_icon="https://repo.opspresso.com/favicon/github.png" \
+            --color="good" --title="${TITLE}" "\`${CURR}\`"
     fi
 }
 
