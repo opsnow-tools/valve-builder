@@ -114,6 +114,7 @@ _gen_version() {
 _check_version() {
     NAME=${1}
     REPO=${2}
+    TRIM=${3}
 
     touch ${SHELL_DIR}/versions/${NAME}
 
@@ -127,6 +128,10 @@ _check_version() {
 
         printf "${NEW}" > ${SHELL_DIR}/versions/${NAME}
         printf "${NEW}" > ${SHELL_DIR}/target/dist/${NAME}
+
+        if [ "${TRIM}" != "" ]; then
+            NEW=$(echo "${NEW}" | cut -d'v' -f2)
+        fi
 
         # replace version
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
@@ -200,7 +205,7 @@ _package() {
 
     if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
         _check_version "awscli" "aws/aws-cli"
-        _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator"
+        _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
 
         _git_push
     else
