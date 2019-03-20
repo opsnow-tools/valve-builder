@@ -158,7 +158,7 @@ _check_version() {
 
             curl -sL repo.opsnow.io/valve-ctl/slack | bash -s -- \
                 --token="${SLACK_TOKEN}" --emoji=":construction_worker:" --username="valve" \
-                --footer="${FOOTER}" --footer_icon="https://repo.opspresso.com/favicon/github.png" \
+                --footer="${FOOTER}" --footer_icon="https://repo.opsnow.io/img/github.png" \
                 --color="good" --title="${REPONAME} updated" "\`${NAME}\` ${NOW} > ${NEW}"
 
             _result " slack ${NAME} ${NOW} > ${NEW} "
