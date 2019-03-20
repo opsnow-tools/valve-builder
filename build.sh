@@ -119,7 +119,19 @@ _check_version() {
     touch ${SHELL_DIR}/versions/${NAME}
 
     NOW=$(cat ${SHELL_DIR}/versions/${NAME} | xargs)
-    NEW=$(curl -s https://api.github.com/repos/${REPO}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
+
+    if [ "${NAME}" == "awscli" ]; then
+        pushd ${SHELL_DIR}/target
+        curl -sLO https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
+        unzip awscli-bundle.zip
+        popd
+
+        NEW=$(ls ${SHELL_DIR}/target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
+
+        rm -rf ${SHELL_DIR}/target/awscli-*
+    else
+        NEW=$(curl -s https://api.github.com/repos/${REPO}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
+    fi
 
     if [ "${NEW}" == "" ]; then
         return
