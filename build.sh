@@ -141,24 +141,20 @@ _check_version() {
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
 
         # slack
-        _slack "${NAME}" "${REPO}" "${NEW}"
+        _slack
     fi
 }
 
 _slack() {
-    NAME=${1}
-    REPO=${2}
-    VERSION=${3}
-
     if [ ! -z ${SLACK_TOKEN} ]; then
         TITLE="${NAME} updated"
 
-        FOOTER="<https://github.com/${REPO}/releases/tag/${VERSION}|${REPO}>"
+        FOOTER="<https://github.com/${REPO}/releases/tag/${NEW}|${REPO}>"
 
         curl -sL repo.opsnow.io/valve-ctl/slack | bash -s -- \
             --token="${SLACK_TOKEN}" --emoji=":construction_worker:" --username="${USERNAME}" \
             --footer="${FOOTER}" --footer_icon="https://repo.opsnow.io/img/github.png" \
-            --color="good" --title="${TITLE}" "\`${VERSION}\`"
+            --color="good" --title="${TITLE}" "\`${NEW}\`"
     fi
 }
 
