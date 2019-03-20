@@ -121,19 +121,23 @@ _check_version() {
     NOW=$(cat ${SHELL_DIR}/versions/${NAME} | xargs)
     NEW=$(curl -s https://api.github.com/repos/${REPO}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
 
+    if [ "${NEW}" == "" ]; then
+        return
+    fi
+
+    if [ "${TRIM}" != "" ]; then
+        NEW=$(echo "${NEW}" | cut -d'v' -f2)
+    fi
+
     _result "$(printf '%-25s %-25s %-25s' "${NAME}" "${NOW}" "${NEW}")"
 
-    if [ "${NEW}" != "" ] && [ "${NEW}" != "${NOW}" ]; then
+    if [ "${NEW}" != "${NOW}" ]; then
         CHANGED=true
 
         printf "${NEW}" > ${SHELL_DIR}/versions/${NAME}
         printf "${NEW}" > ${SHELL_DIR}/target/dist/${NAME}
 
-        if [ "${TRIM}" != "" ]; then
-            NEW=$(echo "${NEW}" | cut -d'v' -f2)
-        fi
-
-        # replace version
+        # replace
         sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
 
         # slack
