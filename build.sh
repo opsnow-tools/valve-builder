@@ -58,7 +58,7 @@ _prepare() {
 
 _get_version() {
     # latest versions
-    VERSION=$(curl -s https://api.github.com/repos/${USERNAME}/${REPONAME}/releases/latest | grep tag_name | cut -d'"' -f4)
+    VERSION=$(curl -s https://api.github.com/repos/${USERNAME}/${REPONAME}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
 
     if [ -z ${VERSION} ]; then
         VERSION=$(curl -sL ${BUCKET}/${REPONAME}/VERSION | xargs)
@@ -112,31 +112,15 @@ _gen_version() {
 }
 
 _check_version() {
-    REPO=${1}
-    NAME=${2}
-    G_NM=${3:-${NAME}}
+    NAME=${1}
+    REPO=${2}
 
     touch ${SHELL_DIR}/versions/${NAME}
+
     NOW=$(cat ${SHELL_DIR}/versions/${NAME} | xargs)
+    NEW=$(curl -s https://api.github.com/repos/${REPO}/releases/latest | grep tag_name | cut -d'"' -f4 | xargs)
 
-    # NWO=$(cat ${SHELL_DIR}/Dockerfile | grep "ENV ${NAME}" | awk '{print $3}')
-
-    if [ "${NAME}" == "awscli" ]; then
-        pushd ${SHELL_DIR}/target
-        curl -sLO https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
-        unzip awscli-bundle.zip
-        popd
-
-        NEW=$(ls ${SHELL_DIR}/target/awscli-bundle/packages/ | grep awscli | sed 's/awscli-//' | sed 's/.tar.gz//' | xargs)
-
-        rm -rf ${SHELL_DIR}/target/awscli-*
-    elif [ "${NAME}" == "kubectl" ]; then
-        NEW=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt | xargs)
-    else
-        NEW=$(curl -s https://api.github.com/repos/${REPO}/${NAME}/releases/latest | grep tag_name | cut -d'"' -f4)
-    fi
-
-    _result "$(printf '%-10s %-10s %-10s' "${NAME}" "${NOW}" "${NEW}")"
+    _result "$(printf '%-25s %-25s %-25s' "${NAME}" "${NOW}" "${NEW}")"
 
     if [ "${NEW}" != "" ] && [ "${NEW}" != "${NOW}" ]; then
         CHANGED=true
@@ -145,24 +129,27 @@ _check_version() {
         printf "${NEW}" > ${SHELL_DIR}/target/dist/${NAME}
 
         # replace version
-        if [ "${NAME}" == "aws-iam-authenticator" ]; then
-            VER=$(echo "${NEW}" | cut -d'v' -f2)
-            sed -i -e "s/ENV awsauth .*/ENV awsauth ${VER}/g" ${SHELL_DIR}/Dockerfile
-        else
-            sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
-        fi
+        sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${SHELL_DIR}/Dockerfile
 
         # slack
-        if [ ! -z ${SLACK_TOKEN} ]; then
-            FOOTER="<https://github.com/${REPO}/${G_NM}|${REPO}/${G_NM}>"
+        _slack "${NAME}" "${REPO}" "${NEW}"
+    fi
+}
 
-            curl -sL repo.opsnow.io/valve-ctl/slack | bash -s -- \
-                --token="${SLACK_TOKEN}" --emoji=":construction_worker:" --username="valve" \
-                --footer="${FOOTER}" --footer_icon="https://repo.opsnow.io/img/github.png" \
-                --color="good" --title="${REPONAME} updated" "\`${NAME}\` ${NOW} > ${NEW}"
+_slack() {
+    NAME=${1}
+    REPO=${2}
+    VERSION=${3}
 
-            _result " slack ${NAME} ${NOW} > ${NEW} "
-        fi
+    if [ ! -z ${SLACK_TOKEN} ]; then
+        TITLE="${NAME} updated"
+
+        FOOTER="<https://github.com/${REPO}/releases/tag/${VERSION}|${REPO}>"
+
+        curl -sL repo.opsnow.io/valve-ctl/slack | bash -s -- \
+            --token="${SLACK_TOKEN}" --emoji=":construction_worker:" --username="${USERNAME}" \
+            --footer="${FOOTER}" --footer_icon="https://repo.opsnow.io/img/github.png" \
+            --color="good" --title="${TITLE}" "\`${VERSION}\`"
     fi
 }
 
@@ -207,13 +194,13 @@ _package() {
 
     _result "VERSION=${VERSION}"
 
-    _check_version "kubernetes" "kubectl" "kubernetes"
-    _check_version "kubernetes-sigs" "aws-iam-authenticator"
-    _check_version "helm" "helm"
-    _check_version "Azure" "draft"
+    _check_version "kubectl" "kubernetes/kubernetes"
+    _check_version "helm" "helm/helm"
+    _check_version "draft" "Azure/draft"
 
     if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
-        _check_version "aws" "awscli" "aws-cli"
+        _check_version "awscli" "aws/aws-cli"
+        _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator"
 
         _git_push
     else
