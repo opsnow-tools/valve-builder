@@ -54,19 +54,19 @@ workflows:
       - release:
           requires:
             - package
-#   nightly:
-#     jobs:
-#       - package
-#       - publish:
-#           requires:
-#             - package
-#       - release:
-#           requires:
-#             - package
-#     triggers:
-#       - schedule:
-#           cron: "0 0 * * *"
-#           filters:
-#             branches:
-#               only:
-#                 - master
+  # nightly:
+  #   jobs:
+  #     - package
+  #     - publish:
+  #         requires:
+  #           - package
+  #     - release:
+  #         requires:
+  #           - package
+  #   triggers:
+  #     - schedule:
+  #         cron: "5 0 * * *"
+  #         filters:
+  #           branches:
+  #             only:
+  #               - master
