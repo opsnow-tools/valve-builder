@@ -29,8 +29,6 @@ RUN curl -sL https://azuredraft.blob.core.windows.net/draft/draft-${draft}-linux
 RUN curl -sLO https://raw.githubusercontent.com/opsnow-tools/valve-butler/master/src/com/opsnow/valve/Butler.groovy && \
     mv Butler.groovy /root/Butler.groovy
 
-COPY slack.sh /usr/local/bin/slack
-
 COPY .m2/ /root/.m2/
 
 ENTRYPOINT ["bash"]
