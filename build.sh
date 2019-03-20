@@ -155,10 +155,12 @@ _check_version() {
         # slack
         if [ ! -z ${SLACK_TOKEN} ]; then
             FOOTER="<https://github.com/${REPO}/${G_NM}|${REPO}/${G_NM}>"
-            ${SHELL_DIR}/slack.sh --token="${SLACK_TOKEN}" --channel="tools" \
-                --emoji=":construction_worker:" --username="valve" \
-                --footer="${FOOTER}" --footer_icon="https://assets-cdn.github.com/favicon.ico" \
+
+            curl -sL repo.opsnow.io/valve-ctl/slack | bash -s -- \
+                --token="${SLACK_TOKEN}" --emoji=":construction_worker:" --username="valve" \
+                --footer="${FOOTER}" --footer_icon="https://repo.opspresso.com/favicon/github.png" \
                 --color="good" --title="${REPONAME} updated" "\`${NAME}\` ${NOW} > ${NEW}"
+
             _result " slack ${NAME} ${NOW} > ${NEW} "
         fi
     fi
