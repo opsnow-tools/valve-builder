@@ -4,10 +4,10 @@ FROM docker
 
 RUN apk add -v --update python py-pip bash curl git jq openssh perl busybox-extras
 
-ENV awscli 1.16.127
+ENV awscli 1.16.129
 ENV awsauth 0.3.0
 ENV kubectl v1.11.8
-ENV helm v2.13.0
+ENV helm v2.13.1
 ENV draft v0.16.0
 
 RUN pip install --upgrade awscli==${awscli} && \
