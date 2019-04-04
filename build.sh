@@ -233,10 +233,10 @@ _package() {
     _check_version "helm" "helm/helm"
     _check_version "draft" "Azure/draft"
 
-    _check_version "awscli" "aws/aws-cli"
-    _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
-
     if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
+        _check_version "awscli" "aws/aws-cli"
+        _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
+
         _git_push
     else
         rm -rf ${SHELL_DIR}/target
