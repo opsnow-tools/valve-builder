@@ -1,11 +1,15 @@
 #!/bin/bash
 
+OS_NAME="$(uname | awk '{print tolower($0)}')"
+
 SHELL_DIR=$(dirname $0)
 
 CMD=${1:-${CIRCLE_JOB}}
 
 USERNAME=${CIRCLE_PROJECT_USERNAME:-opsnow-tools}
 REPONAME=${CIRCLE_PROJECT_REPONAME:-valve-builder}
+
+BRANCH=${CIRCLE_BRANCH:-master}
 
 BUCKET="repo.opsnow.io"
 
@@ -45,6 +49,14 @@ _error() {
     echo
     _echo "- $@" 1
     exit 1
+}
+
+_replace() {
+    if [ "${OS_NAME}" == "darwin" ]; then
+        sed -i "" -e "$1" $2
+    else
+        sed -i -e "$1" $2
+    fi
 }
 
 _prepare() {
@@ -87,12 +99,12 @@ _gen_version() {
         VERSION=$(cat ${SHELL_DIR}/VERSION | xargs)
     fi
 
-    _result "CIRCLE_BRANCH=${CIRCLE_BRANCH}"
+    _result "BRANCH=${BRANCH}"
     _result "PR_NUM=${PR_NUM}"
     _result "PR_URL=${PR_URL}"
 
     # version
-    if [ "${CIRCLE_BRANCH}" == "master" ]; then
+    if [ "${BRANCH}" == "master" ]; then
         VERSION=$(echo ${VERSION} | perl -pe 's/^(([v\d]+\.)*)(\d+)(.*)$/$1.($3+1).$4/e')
         printf "${VERSION}" > ${SHELL_DIR}/target/VERSION
     else
@@ -152,7 +164,7 @@ _check_version() {
         printf "${NEW}" > ${SHELL_DIR}/target/dist/${NAME}
 
         # replace
-        sed -i -e "s/ENV ${NAME} .*/ENV ${NAME} ${CURR}/g" ${SHELL_DIR}/Dockerfile
+        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${CURR}/g" ${SHELL_DIR}/Dockerfile
 
         # slack
         _slack "${NAME}" "${REPO}" "${NEW}"
@@ -221,10 +233,10 @@ _package() {
     _check_version "helm" "helm/helm"
     _check_version "draft" "Azure/draft"
 
-    _check_version "awscli" "aws/aws-cli"
-    _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
-
     if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
+        _check_version "awscli" "aws/aws-cli"
+        _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
+
         _git_push
     else
         rm -rf ${SHELL_DIR}/target
