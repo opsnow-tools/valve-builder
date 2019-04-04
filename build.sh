@@ -165,6 +165,7 @@ _check_version() {
 
         # replace
         _replace "s/ENV ${NAME} .*/ENV ${NAME} ${CURR}/g" ${SHELL_DIR}/Dockerfile
+        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${CURR}/g" ${SHELL_DIR}/README.md
 
         # slack
         _slack "${NAME}" "${REPO}" "${NEW}"
@@ -176,19 +177,22 @@ _slack() {
     REPO=${2}
     CURR=${3}
 
-    if [ ! -z ${SLACK_TOKEN} ]; then
-        TITLE="${NAME} updated"
-
-        FOOTER="<https://github.com/${REPO}/releases/tag/${CURR}|${REPO}>"
-
-        curl -sL opspresso.com/tools/slack | bash -s -- \
-            --token="${SLACK_TOKEN}" --emoji=":construction_worker:" --username="${USERNAME}" \
-            --footer="${FOOTER}" --footer_icon="https://repo.opspresso.com/favicon/github.png" \
-            --color="good" --title="${TITLE}" "\`${CURR}\`"
+    if [ -z ${SLACK_TOKEN} ]; then
+        return
     fi
+
+    curl -sL repo.opsnow.io/valve-ctl/slack | bash -s -- \
+        --token="${SLACK_TOKEN}" --emoji=":construction_worker:" --username="${USERNAME}" \
+        --footer="<https://github.com/${REPO}/releases/tag/${CURR}|${REPO}>" \
+        --footer_icon="https://repo.opspresso.com/favicon/github.png" \
+        --color="good" --title="${NAME} updated" "\`${CURR}\`"
 }
 
 _git_push() {
+    if [ -z ${GITHUB_TOKEN} ]; then
+        return
+    fi
+
     # commit log
     LIST=/tmp/versions
     ls ${SHELL_DIR}/versions | sort > ${LIST}
@@ -233,7 +237,7 @@ _package() {
     _check_version "helm" "helm/helm"
     _check_version "draft" "Azure/draft"
 
-    if [ ! -z ${GITHUB_TOKEN} ] && [ ! -z ${CHANGED} ]; then
+    if [ ! -z ${CHANGED} ]; then
         _check_version "awscli" "aws/aws-cli"
         _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
 
@@ -257,9 +261,13 @@ _publish() {
 }
 
 _release() {
+    if [ -z ${GITHUB_TOKEN} ]; then
+        return
+    fi
     if [ ! -f ${SHELL_DIR}/target/VERSION ]; then
         return
     fi
+
     if [ -f ${SHELL_DIR}/target/PRE ]; then
         GHR_PARAM="-delete -prerelease"
     else
