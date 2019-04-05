@@ -7,9 +7,12 @@
 docker pull quay.io/opsnow-tools/valve-builder
 ```
 
-## installed tools
+## versions
 
-* kubectl
-* helm
-* draft
-* aws-iam-authenticator
+```
+ENV awscli 1.16.138
+ENV awsauth 0.3.0
+ENV kubectl v1.14.0
+ENV helm v2.13.1
+ENV draft v0.16.0
+```
