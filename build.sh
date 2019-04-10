@@ -182,7 +182,7 @@ _slack() {
     fi
 
     curl -sL repo.opsnow.io/valve-ctl/slack | bash -s -- \
-        --token="${SLACK_TOKEN}" --emoji=":construction_worker:" --username="${USERNAME}" \
+        --token="${SLACK_TOKEN}" --username="${USERNAME}" \
         --footer="<https://github.com/${REPO}/releases/tag/${CURR}|${REPO}>" \
         --footer_icon="https://repo.opspresso.com/favicon/github.png" \
         --color="good" --title="${NAME} updated" "\`${CURR}\`"
