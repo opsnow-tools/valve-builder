@@ -45,16 +45,7 @@ jobs:
 
 workflows:
   version: 2
-  apply:
-    jobs:
-      - package
-      - publish:
-          requires:
-            - package
-      - release:
-          requires:
-            - package
-  # nightly:
+  # apply:
   #   jobs:
   #     - package
   #     - publish:
@@ -63,10 +54,19 @@ workflows:
   #     - release:
   #         requires:
   #           - package
-  #   triggers:
-  #     - schedule:
-  #         cron: "5 0 * * *"
-  #         filters:
-  #           branches:
-  #             only:
-  #               - master
+  nightly:
+    jobs:
+      - package
+      - publish:
+          requires:
+            - package
+      - release:
+          requires:
+            - package
+    triggers:
+      - schedule:
+          cron: "5 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
