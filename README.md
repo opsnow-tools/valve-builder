@@ -18,3 +18,4 @@ ENV kubectl 0
 ENV helm 0
 ENV argo 0
 ```
+.
