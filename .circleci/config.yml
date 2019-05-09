@@ -12,14 +12,15 @@ jobs:
       - run:
           name: Package
           command: |
-            chmod 755 ./build.sh
-            ./build.sh package
+            mkdir target
+            curl -sLo target/builder.sh repo.opsnow.io/valve-ctl/builder
+            bash ./target/builder.sh package
+            bash ./build.sh
       - persist_to_workspace:
           root: /tmp/works
           paths:
             - target/*
             - versions/*
-            - build.sh
   publish:
     docker:
       - image: opspresso/awscli
@@ -29,8 +30,7 @@ jobs:
       - run:
           name: Publish
           command: |
-            chmod 755 ./works/build.sh
-            ./works/build.sh publish
+            bash ./works/target/builder.sh publish ./works
   release:
     docker:
       - image: circleci/golang
@@ -40,8 +40,17 @@ jobs:
       - run:
           name: Release
           command: |
-            chmod 755 ./works/build.sh
-            ./works/build.sh release
+            bash ./works/target/builder.sh release ./works
+  slack:
+    docker:
+      - image: circleci/python
+    steps:
+      - attach_workspace:
+          at: works
+      - run:
+          name: Slack
+          command: |
+            bash ./works/target/builder.sh slack ./works
 
 workflows:
   version: 2
@@ -54,6 +63,9 @@ workflows:
   #     - release:
   #         requires:
   #           - package
+  #     - slack:
+  #         requires:
+  #           - release
   nightly:
     jobs:
       - package
@@ -63,9 +75,12 @@ workflows:
       - release:
           requires:
             - package
+      - slack:
+          requires:
+            - release
     triggers:
       - schedule:
-          cron: "5 0 * * *"
+          cron: "5 * * * *"
           filters:
             branches:
               only:
