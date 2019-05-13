@@ -8,7 +8,6 @@ ENV awscli 0
 ENV awsauth 0
 ENV kubectl 0
 ENV helm 0
-ENV argo 0
 
 RUN pip3 install --upgrade awscli==${awscli} && \
     rm /var/cache/apk/*
@@ -21,9 +20,6 @@ RUN curl -sLO https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/
 
 RUN curl -sL https://storage.googleapis.com/kubernetes-helm/helm-${helm}-linux-amd64.tar.gz | tar xz && \
     mv linux-amd64/helm /usr/local/bin/helm
-
-RUN curl -sLO https://github.com/argoproj/argo/releases/download/${argo}/argo-linux-amd64 && \
-    chmod +x argo-linux-amd64 && mv argo-linux-amd64 /usr/local/bin/argo
 
 COPY .m2/ /root/.m2/
 

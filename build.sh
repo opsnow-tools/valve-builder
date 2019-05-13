@@ -72,7 +72,6 @@ _prepare() {
 _package() {
     _check_version "kubectl" "kubernetes/kubernetes"
     _check_version "helm" "helm/helm"
-    _check_version "argo" "argoproj/argo"
 
     if [ ! -z ${CHANGED} ]; then
         _check_version "awscli" "aws/aws-cli"

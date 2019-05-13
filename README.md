@@ -16,5 +16,4 @@ ENV awscli 0
 ENV awsauth 0
 ENV kubectl 0
 ENV helm 0
-ENV argo 0
 ```
