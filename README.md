@@ -1,6 +1,5 @@
 # valve-builder
 
-[![Docker Repository on Quay](https://quay.io/repository/opsnow-tools/valve-builder/status "Docker Repository on Quay")](https://quay.io/repository/opsnow-tools/valve-builder)
 [![GitHub release](https://img.shields.io/github/release/opsnow-tools/valve-builder.svg)](https://github.com/opsnow-tools/valve-builder/releases)
 [![CircleCI](https://circleci.com/gh/opsnow-tools/valve-builder.svg?style=svg)](https://circleci.com/gh/opsnow-tools/valve-builder)
 
@@ -13,9 +12,8 @@ docker pull opsnowtools/valve-builder
 ## versions
 
 ```
-ENV awscli 1.16.155
-ENV awsauth 0.4.0
-ENV kubectl v1.13.6
-ENV helm v2.13.1
-ENV draft v0.16.0
+ENV awscli 0
+ENV awsauth 0
+ENV kubectl 0
+ENV helm 0
 ```
