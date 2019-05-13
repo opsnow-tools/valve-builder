@@ -78,7 +78,7 @@ _package() {
         _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
 
         _git_push
-    else
+
         echo "stop" > ${RUN_PATH}/target/circleci-stop
     fi
 }
