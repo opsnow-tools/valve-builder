@@ -106,10 +106,8 @@ _check_version() {
         return
     fi
 
-    if [ "${TRIM}" == "" ]; then
-        CURR="${NEW}"
-    else
-        CURR=$(echo "${NEW}" | cut -d'v' -f2)
+    if [ "${TRIM}" != "" ]; then
+        NEW=$(echo "${NEW}" | cut -d'v' -f2)
     fi
 
     _result "$(printf '%-25s %-25s %-25s' "${NAME}" "${NOW}" "${NEW}")"
@@ -120,8 +118,8 @@ _check_version() {
         printf "${NEW}" > ${RUN_PATH}/target/release/${NAME}
 
         # replace
-        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${CURR}/g" ${RUN_PATH}/Dockerfile
-        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${CURR}/g" ${RUN_PATH}/README.md
+        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${RUN_PATH}/Dockerfile
+        _replace "s/ENV ${NAME} .*/ENV ${NAME} ${NEW}/g" ${RUN_PATH}/README.md
 
         # slack
         _slack "${NAME}" "${REPO}" "${NEW}"
@@ -150,7 +148,7 @@ _git_push() {
 
     # commit message
     LIST=/tmp/versions
-    ls ${RUN_PATH}/target/release | sort > ${LIST}
+    ls ${RUN_PATH}/target/release > ${LIST}
 
     echo "${REPONAME}" > ${RUN_PATH}/target/message
 
