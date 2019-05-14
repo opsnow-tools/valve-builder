@@ -5,7 +5,7 @@ FROM docker
 RUN apk add -v --update python3 python3-dev bash curl git jq openssh perl busybox-extras
 
 ENV awscli 1.16.156
-ENV awsauth 0.4.0
+ENV awsauth 0.3.0
 ENV kubectl v1.13.6
 ENV helm v2.13.1
 
