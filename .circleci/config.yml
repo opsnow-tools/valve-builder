@@ -28,7 +28,6 @@ jobs:
           root: /tmp/works
           paths:
             - target/*
-            - versions/*
   publish:
     docker:
       - image: opspresso/awscli
