@@ -63,7 +63,6 @@ _prepare() {
     # target
     mkdir -p ${RUN_PATH}/target/publish
     mkdir -p ${RUN_PATH}/target/release
-    mkdir -p ${RUN_PATH}/versions
 
     # 755
     find ${RUN_PATH}/** | grep [.]sh | xargs chmod 755
@@ -88,9 +87,7 @@ _check_version() {
     REPO=${2}
     TRIM=${3}
 
-    touch ${RUN_PATH}/versions/${NAME}
-
-    NOW=$(cat ${RUN_PATH}/versions/${NAME} | xargs)
+    NOW=$(cat ${RUN_PATH}/Dockerfile | grep "ENV ${NAME}" | awk '{print $3}' | xargs)
 
     if [ "${NAME}" == "awscli" ]; then
         pushd ${RUN_PATH}/target
@@ -120,7 +117,6 @@ _check_version() {
     if [ "${NEW}" != "${NOW}" ]; then
         CHANGED=true
 
-        printf "${NEW}" > ${RUN_PATH}/versions/${NAME}
         printf "${NEW}" > ${RUN_PATH}/target/release/${NAME}
 
         # replace
@@ -152,14 +148,14 @@ _git_push() {
         return
     fi
 
-    # commit log
+    # commit message
     LIST=/tmp/versions
-    ls ${RUN_PATH}/versions | sort > ${LIST}
+    ls ${RUN_PATH}/target/release | sort > ${LIST}
 
-    echo "${REPONAME}" > ${RUN_PATH}/target/log
+    echo "${REPONAME}" > ${RUN_PATH}/target/message
 
     while read VAL; do
-        echo "${VAL} $(cat ${RUN_PATH}/versions/${VAL} | xargs)" >> ${RUN_PATH}/target/log
+        echo "${VAL} $(cat ${RUN_PATH}/target/release/${VAL} | xargs)" >> ${RUN_PATH}/target/message
     done < ${LIST}
 
     git config --global user.name "${GIT_USERNAME}"
@@ -168,8 +164,8 @@ _git_push() {
     _command "git add --all"
     git add --all
 
-    _command "git commit -m $(cat ${RUN_PATH}/target/log)"
-    git commit -m "$(cat ${RUN_PATH}/target/log)"
+    _command "git commit -m $(cat ${RUN_PATH}/target/message)"
+    git commit -m "$(cat ${RUN_PATH}/target/message)"
 
     _command "git push github.com/${USERNAME}/${REPONAME} ${BRANCH}"
     git push -q https://${GITHUB_TOKEN}@github.com/${USERNAME}/${REPONAME}.git ${BRANCH}
