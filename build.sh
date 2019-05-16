@@ -73,8 +73,8 @@ _package() {
     _check_version "helm" "helm/helm"
 
     if [ ! -z ${CHANGED} ]; then
-        _check_version "awscli" "aws/aws-cli"
-        _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
+        # _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
+        # _check_version "awscli" "aws/aws-cli"
 
         _git_push
 
