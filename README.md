@@ -15,5 +15,5 @@ docker pull opsnowtools/valve-builder
 ENV awscli 1.16.159
 ENV awsauth 0.3.0
 ENV helm v2.14.1
-ENV kubectl v1.12.10
+ENV kubectl v1.14.4
 ```

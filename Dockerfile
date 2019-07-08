@@ -7,7 +7,7 @@ RUN apk add -v --update python3 python3-dev bash curl git jq openssh perl busybo
 ENV awscli 1.16.159
 ENV awsauth 0.3.0
 ENV helm v2.14.1
-ENV kubectl v1.12.10
+ENV kubectl v1.14.4
 
 RUN pip3 install --upgrade awscli==${awscli} && \
     rm /var/cache/apk/*
