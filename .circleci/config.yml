@@ -3,10 +3,19 @@
 #
 version: 2
 jobs:
+  build:
+    docker:
+      - image: circleci/python
+    steps:
+      - checkout
+      - run:
+          name: Build
+          command: |
+            bash ./build.sh
   package:
     docker:
       - image: circleci/python
-    working_directory: /tmp/works
+    working_directory: ~/works
     steps:
       - checkout
       - run:
@@ -15,42 +24,43 @@ jobs:
             mkdir target
             curl -sLo target/builder.sh repo.opsnow.io/valve-ctl/builder
             bash ./target/builder.sh package
-            bash ./build.sh
       - persist_to_workspace:
-          root: /tmp/works
+          root: ~/works
           paths:
-            - target/*
-            - versions/*
+            - target
   publish:
     docker:
       - image: opspresso/awscli
+    working_directory: ~/works
     steps:
       - attach_workspace:
-          at: works
+          at: ~/works
       - run:
           name: Publish
           command: |
-            bash ./works/target/builder.sh publish ./works
+            bash ./target/builder.sh publish
   release:
     docker:
       - image: circleci/golang
+    working_directory: ~/works
     steps:
       - attach_workspace:
-          at: works
+          at: ~/works
       - run:
           name: Release
           command: |
-            bash ./works/target/builder.sh release ./works
+            bash ./target/builder.sh release
   slack:
     docker:
       - image: circleci/python
+    working_directory: ~/works
     steps:
       - attach_workspace:
-          at: works
+          at: ~/works
       - run:
           name: Slack
           command: |
-            bash ./works/target/builder.sh slack ./works
+            bash ./target/builder.sh slack
 
 workflows:
   version: 2
@@ -68,19 +78,10 @@ workflows:
             - release
   nightly:
     jobs:
-      - package
-      # - publish:
-      #     requires:
-      #       - package
-      # - release:
-      #     requires:
-      #       - package
-      # - slack:
-      #     requires:
-      #       - release
+      - build
     triggers:
       - schedule:
-          cron: "5 * * * *"
+          cron: "0 * * * *"
           filters:
             branches:
               only:
