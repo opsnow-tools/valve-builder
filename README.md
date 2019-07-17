@@ -5,15 +5,21 @@
 
 [![DockerHub Badge](http://dockeri.co/image/opsnowtools/valve-builder)](https://hub.docker.com/r/opsnowtools/valve-builder/)
 
-```bash
-docker pull opsnowtools/valve-builder
-```
 
-## versions
+valve-builder 는 젠킨스에서 개별 작업을 실행하는 젠킨스 슬레이브가 실제 필드 작업에 사용할 컨테이너 이미지를 제공합니다.
+docker를 베이스 이미지로 사용하여 각 종 툴을 설치해 최종 이미지를 제공합니다.
+설치되는 주요 도구는 아래와 같습니다.
 
+## tools
 ```
 ENV awscli 1.16.156
 ENV awsauth 0.4.0
 ENV kubectl v1.13.6
 ENV helm v2.13.1
+```
+
+## docket image
+최종적으로 만들어진 이미지는 도커허브에 업로드 됩니다.
+```bash
+docker pull opsnowtools/valve-builder
 ```
