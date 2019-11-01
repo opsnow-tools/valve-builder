@@ -2,13 +2,20 @@
 
 FROM docker
 
-RUN apk add -v --update python3 python3-dev bash curl git jq openssh perl busybox-extras unzip
-
 ENV awscli 1.16.159
 ENV awsauth 0.3.0
 ENV helm v2.14.2
 ENV kubectl v1.14.4
 ENV terraform 0.12.12
+
+ENV rubygems 3.0.6
+
+RUN apk add -v --update python3 python3-dev bash curl git jq openssh perl busybox-extras unzip ruby build-base ruby-dev
+
+RUN gem install atlassian-stash --no-rdoc --no-ri 
+
+RUN apk del build-base ruby-dev
+
 
 RUN pip3 install --upgrade awscli==${awscli} && \
     rm /var/cache/apk/*
