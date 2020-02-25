@@ -70,7 +70,7 @@ _prepare() {
 
 _package() {
     _check_version "kubectl" "kubernetes/kubernetes"
-    _check_version "helm" "helm/helm"
+#    _check_version "helm" "helm/helm"
 
     if [ ! -z ${CHANGED} ]; then
         # _check_version "awsauth" "kubernetes-sigs/aws-iam-authenticator" "v"
