@@ -12,7 +12,7 @@ ENV rubygems 3.0.6
 
 RUN apk add -v --update python3 python3-dev bash curl git jq openssh perl busybox-extras unzip ruby build-base ruby-dev
 
-RUN gem install atlassian-stash --no-rdoc --no-ri 
+RUN gem install atlassian-stash --no-document 
 
 RUN apk del build-base ruby-dev
 
