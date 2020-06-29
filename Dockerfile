@@ -10,7 +10,7 @@ ENV terraform 0.12.12
 
 ENV rubygems 3.0.6
 
-RUN apk add -v --update python3 python3-dev bash curl git jq openssh perl busybox-extras unzip ruby build-base ruby-dev
+RUN apk add -v --update python3 python3-dev bash curl git jq openssh perl busybox-extras zip unzip ruby build-base ruby-dev
 
 RUN gem install atlassian-stash --no-document 
 
