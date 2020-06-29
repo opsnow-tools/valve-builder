@@ -17,7 +17,7 @@ RUN gem install atlassian-stash --no-document
 RUN apk del build-base ruby-dev
 
 
-RUN pip3 install --upgrade awscli==${awscli} && \
+RUN python3 -m pip install --upgrade awscli==${awscli} && \
     rm /var/cache/apk/*
 
 RUN curl -sLO https://storage.googleapis.com/kubernetes-release/release/${kubectl}/bin/linux/amd64/kubectl && \
