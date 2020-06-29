@@ -10,14 +10,14 @@ ENV terraform 0.12.12
 
 ENV rubygems 3.0.6
 
-RUN apk add -v --update python3 python3-dev bash curl git jq openssh perl busybox-extras zip unzip ruby build-base ruby-dev
+RUN apk add -v --update python3 python3-dev py3-pip bash curl git jq openssh perl busybox-extras zip unzip ruby build-base ruby-dev
 
 RUN gem install atlassian-stash --no-document 
 
 RUN apk del build-base ruby-dev
 
 
-RUN python3 -m pip install --upgrade awscli==${awscli} && \
+RUN pip3 install --upgrade awscli==${awscli} && \
     rm /var/cache/apk/*
 
 RUN curl -sLO https://storage.googleapis.com/kubernetes-release/release/${kubectl}/bin/linux/amd64/kubectl && \
