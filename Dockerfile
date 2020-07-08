@@ -4,7 +4,7 @@ FROM docker
 
 ENV awscli 1.16.159
 ENV awsauth 0.3.0
-ENV helm v2.16.3
+ENV helm v3.2.4
 ENV kubectl v1.18.5
 ENV terraform 0.12.12
 
@@ -23,7 +23,7 @@ RUN pip3 install --upgrade awscli==${awscli} && \
 RUN curl -sLO https://storage.googleapis.com/kubernetes-release/release/${kubectl}/bin/linux/amd64/kubectl && \
     chmod +x kubectl && mv kubectl /usr/local/bin/kubectl
 
-RUN curl -sL https://storage.googleapis.com/kubernetes-helm/helm-${helm}-linux-amd64.tar.gz | tar xz && \
+RUN curl -sL https://get.helm.sh/helm-${helm}-linux-amd64.tar.gz | tar xz && \
     mv linux-amd64/helm /usr/local/bin/helm
 
 RUN curl -sLO https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v${awsauth}/heptio-authenticator-aws_${awsauth}_linux_amd64 && \
