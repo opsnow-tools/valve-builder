@@ -5,7 +5,7 @@ FROM docker
 ENV awscli 1.16.159
 ENV awsauth 0.3.0
 ENV helm v3.2.4
-ENV kubectl v1.35.0
+ENV kubectl v1.35.1
 ENV terraform 0.12.12
 
 ENV rubygems 3.0.6
