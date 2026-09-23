@@ -15,7 +15,7 @@ docker를 베이스 이미지로 사용하여 각 종 툴을 설치해 최종 �
 ENV awscli 1.16.159
 ENV awsauth 0.3.0
 ENV helm v2.16.3
-ENV kubectl v1.37.0
+ENV kubectl v1.37.1
 ```
 
 ## docket image
